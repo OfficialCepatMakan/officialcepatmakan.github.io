@@ -45,83 +45,145 @@ document.addEventListener("DOMContentLoaded", () => {
       .then(response => response.json())
       .then(data => {
         adminEmails = data.adminEmails;
+        console.log("Loaded admin emails:", adminEmails);
   
       })
       .catch(error => {
         console.error("Failed to load admins.json:", error);
       });
 
-    function fetchAndRenderOrders(mail, admins) {
-      const ordersRef = db.ref('Orders');
-      const ordersList = document.getElementById('orders-list');
-      ordersList.innerHTML = ''; // clear existing orders
+  function fetchAndRenderOrders(mail, admins, courier) {
+    console.log(mail);
+    console.log(admins);
+    const ordersRef = db.ref('Orders');
+    const ordersList = document.getElementById('orders-list');
+    ordersList.innerHTML = ''; // clear existing orders
+  
+    ordersRef.once('value', (snapshot) => {
+      if (!snapshot.exists()) {
+        ordersList.innerHTML = '<p>No orders found.</p>';
+        return;
+      }
     
-      ordersRef.once('value', (snapshot) => {
-        if (!snapshot.exists()) {
-          ordersList.innerHTML = '<p>No orders found.</p>';
-          return;
-        }
+      snapshot.forEach((childSnapshot) => {
+        const order = childSnapshot.val();
+        const orderId = childSnapshot.key;
       
-        snapshot.forEach((childSnapshot) => {
-          const order = childSnapshot.val();
-          const orderId = childSnapshot.key;
+        if (order.mail === mail || admins.includes(mail) || courier) {
+          const orderDiv = document.createElement('div');
+          orderDiv.className = 'order-item';
         
-          if (order.mail === mail || admins.includes(mail)) {
-            const orderDiv = document.createElement('div');
-            orderDiv.className = 'order-item';
+          let itemsHTML = '';
+          order.items.forEach((item) => {
+            itemsHTML += `
+              <p>
+                ${item.name} x${item.quantity} — Rp${(item.price * item.quantity).toLocaleString()}
+              </p>`;
+          });
+        
+          let deleteButtonHTML = '';
+          let EmailP = '';
+          if (admins.includes(mail)) {
+            deleteButtonHTML = `
+              <button class="remove-order" id="${orderId}">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" 
+                  stroke-width="1.5" stroke="currentColor" style="width:16px; height:16px;">
+                  <path stroke-linecap="round" stroke-linejoin="round" 
+                    d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 
+                       1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 
+                       1-2.244 2.077H8.084a2.25 2.25 0 0 
+                       1-2.244-2.077L4.772 5.79m14.456 
+                       0a48.108 48.108 0 0 0-3.478-.397m-12 
+                       .562c.34-.059.68-.114 1.022-.165m0 
+                       0a48.11 48.11 0 0 1 3.478-.397m7.5 
+                       0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 
+                       51.964 0 0 0-3.32 0c-1.18.037-2.09 
+                       1.022-2.09 2.201v.916m7.5 0a48.667 
+                       48.667 0 0 0-7.5 0" />
+                </svg>
+              </button>`;
+            EmailP = `<p><strong>Email:</strong> ${order.mail}</p>`;
+          }
+        
+          // ✅ Courier checkbox
+          let courierHTML = '';
+          if (courier) {
+            const taken = order.courier && order.courier !== "";
+            const isMine = order.courier === courier;
           
-            let itemsHTML = '';
-            order.items.forEach((item) => {
-              itemsHTML += `
-                <p>
-                  ${item.name} x${item.quantity} — Rp${(item.price * item.quantity).toLocaleString()}
-                </p>`;
-            });
-          
-            let deleteButtonHTML = '';
-            if (admins.includes(mail)) {
-              deleteButtonHTML = `
-                <button class="remove-order" id="${orderId}">
-                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" style="width:16px; height:16px;">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0" />
-                  </svg>
-                </button>`;
-            }
-              
-          
-            orderDiv.innerHTML = `
-              <h4>${order.name} (${order.grade}-${order.class})</h4>
-              <p><strong>Payment:</strong> ${order.paymentMethod}</p>
-              <p><strong>Items:</strong>${itemsHTML}</p>
-              <p><strong>Total:</strong> Rp${order.total.toLocaleString()}</p>
-              <p><strong>Notes*:</strong> ${order.notes}</p>
-              <p><strong>Email:</strong> ${order.mail}</p>
-              ${deleteButtonHTML}
+            courierHTML = `
+              <label>
+                <input type="checkbox" class="take-order" data-id="${orderId}" 
+                  ${isMine ? 'checked' : ''} ${taken && !isMine ? 'disabled' : ''}>
+                ${isMine ? 'You took this order' : taken ? 'Taken by another courier' : 'Take this order'}
+              </label>
             `;
           
-            ordersList.appendChild(orderDiv);
-          
-            // ✅ Attach delete listener if button exists
-            if (admins.includes(mail)) {
-              const deleteBtn = orderDiv.querySelector('.remove-order');
-              deleteBtn.addEventListener('click', () => {
-                if (!confirm("Are you sure you want to delete this order?")) return;
+            // Show badge of who’s handling it
+            if (taken) {
+              courierHTML += `<p><strong>Courier:</strong> ${order.courier}</p>`;
+            }
+          }
+        
+          orderDiv.innerHTML = `
+            <h4>${order.name} (${order.grade}-${order.class})</h4>
+            <p><strong>Payment:</strong> ${order.paymentMethod}</p>
+            <p><strong>Items:</strong>${itemsHTML}</p>
+            <p><strong>Total:</strong> Rp${order.total.toLocaleString()}</p>
+            ${EmailP}
+            ${courierHTML}
+            ${deleteButtonHTML}
+          `;
+        
+          ordersList.appendChild(orderDiv);
+        
+          // ✅ Attach delete listener if button exists
+          if (admins.includes(mail)) {
+            const deleteBtn = orderDiv.querySelector('.remove-order');
+            deleteBtn.addEventListener('click', () => {
+              if (!confirm("Are you sure you want to delete this order?")) return;
+            
+              db.ref('Orders/' + orderId).remove()
+                .then(() => {
+                  alert("Order deleted successfully.");
+                  fetchAndRenderOrders(mail, admins, courier); // refresh
+                })
+                .catch((error) => {
+                  console.error("Error deleting order:", error);
+                  alert("Failed to delete order.");
+                });
+            });
+          }
+        
+          // ✅ Attach courier checkbox logic
+          if (courier) {
+            const takeOrderCheckbox = orderDiv.querySelector('.take-order');
+            if (takeOrderCheckbox) {
+              takeOrderCheckbox.addEventListener('change', (e) => {
+                const checked = e.target.checked;
+                const id = e.target.dataset.id;
               
-                db.ref('Orders/' + orderId).remove()
-                  .then(() => {
-                    alert("Order deleted successfully.");
-                    fetchAndRenderOrders(mail, admins); // refresh
-                  })
-                  .catch((error) => {
-                    console.error("Error deleting order:", error);
-                    alert("Failed to delete order.");
-                  });
+                if (checked) {
+                  db.ref('Orders/' + id).update({ courier: courier })
+                    .then(() => {
+                      alert("You took the order.");
+                      fetchAndRenderOrders(mail, admins, courier);
+                    });
+                } else {
+                  db.ref('Orders/' + id).update({ courier: "" })
+                    .then(() => {
+                      alert("You released the order.");
+                      fetchAndRenderOrders(mail, admins, courier);
+                    });
+                }
               });
             }
           }
-        });
+        }
       });
-    }
+    });
+  }
+  
     
 
     document.getElementById('order-btn').addEventListener('click', function () {
@@ -133,6 +195,8 @@ document.addEventListener("DOMContentLoaded", () => {
       const user = firebase.auth().currentUser;
 
       if (user) {
+        console.log("Signed in user:", user);
+        console.log("user.email = ", user.email);
         SendOrder(cart, user.email); // ✅ email is now defined
       } else {
         alert("You must be logged in to order.");
@@ -197,6 +261,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     auth.onAuthStateChanged((user) => {
       if (user) {
+        console.log("User signed in:", user.displayName);
 
         // Clear container first
         authContainer.innerHTML = "";
@@ -230,6 +295,7 @@ document.addEventListener("DOMContentLoaded", () => {
         signInBtn.addEventListener("click", () => {
           auth.signInWithPopup(provider)
             .then((result) => {
+              console.log("Signed in as", result.user.displayName);
               user = result.user.displayName
             })
             .catch((error) => {
@@ -321,6 +387,7 @@ document.addEventListener("DOMContentLoaded", () => {
     cart.forEach((item) => {
       totalItems += item.quantity;
       totalPrice += item.price * item.quantity;
+      console.log(item)
 
       const cartItem = document.createElement('div');
       cartItem.className = 'cart-item';
@@ -348,6 +415,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
         updateCartDisplay();
       });
+      console.log(item.stock)
       plusBtn.addEventListener('click', () => {
         if (item.quantity < item.stock){
           item.quantity++;
@@ -374,7 +442,6 @@ document.addEventListener("DOMContentLoaded", () => {
     const className = document.getElementById('class').value || '';
     const paymentMethod = document.getElementById('paymentmethod').value || '';
     const name = document.getElementById('name').value || '';
-    const notes = document.getElementById('Notes').value || '';
 
     // Validation
     if (!grade.trim() || !className.trim() || !paymentMethod.trim() || !name.trim()) {
@@ -387,10 +454,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
     stockRef.once('value').then(snapshot => {
       const menuData = snapshot.val();
+      console.log("Menu data:", menuData);
 
       // ✅ Validate stock
       for (const item of cart) {
         const itemData = menuData[item.key];
+        console.log(itemData)
+        console.log(item.key)
         if (!itemData) {
           alert(`Item ${item.key} not found in database`);
           return;
@@ -409,7 +479,6 @@ document.addEventListener("DOMContentLoaded", () => {
         paymentMethod,
         items: cart,
         total: cart.reduce((sum, item) => sum + item.price * item.quantity, 0),
-        notes: notes,
         mail,
         timestamp: new Date().toISOString()
       };
@@ -417,6 +486,7 @@ document.addEventListener("DOMContentLoaded", () => {
       // ✅ Push order
       ordersRef.push(orderData)
         .then(() => {
+          console.log('Order saved successfully.');
           alert("Order submitted!");
 
           // 🔄 Update stock (transaction prevents race conditions)
@@ -471,7 +541,7 @@ document.addEventListener("DOMContentLoaded", () => {
       if (existing) {
         existing.quantity += quantity;
       } else {
-        alert("The item has been saved to cart, press the 3 dots tab to open cart")
+        console.log(key)
         cart.push({
           key: key,
           name: item.name,
@@ -489,9 +559,3 @@ document.addEventListener("DOMContentLoaded", () => {
       updateCartDisplay();
     });
   }
-
-
-
-
-
-
