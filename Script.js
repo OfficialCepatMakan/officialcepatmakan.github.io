@@ -40,6 +40,7 @@ sidePanel.querySelectorAll(".nav-buttons button").forEach(btn => {
 document.addEventListener("DOMContentLoaded", () => {
     const authContainer = document.getElementById("authContainer");
     let adminEmails = [];
+    let courierEmails = [];
 
     fetch('Admins.json')
       .then(response => response.json())
@@ -50,6 +51,17 @@ document.addEventListener("DOMContentLoaded", () => {
       })
       .catch(error => {
         console.error("Failed to load admins.json:", error);
+      });
+
+    fetch('Courier.json')
+      .then(response => response.json())
+      .then(data => {
+        courierEmails = data.courierEmails;
+        console.log("Loaded courier emails:", courierEmails);
+  
+      })
+      .catch(error => {
+        console.error("Failed to load courier.json:", error);
       });
 
   function fetchAndRenderOrders(mail, admins, courier) {
@@ -249,7 +261,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         const user = firebase.auth().currentUser;
         if (user && user.email) {
-          fetchAndRenderOrders(user.email, adminEmails);
+          fetchAndRenderOrders(user.email, adminEmails, courierEmails);
           
         } else {
           console.error("No user signed in");
