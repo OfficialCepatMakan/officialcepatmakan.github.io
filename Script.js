@@ -176,7 +176,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 const id = e.target.dataset.id;
               
                 if (checked) {
-                  db.ref('Orders/' + id).update({ courier: courier })
+                  db.ref('Orders/' + id).update({ courier: mail })
                     .then(() => {
                       alert("You took the order.");
                       fetchAndRenderOrders(mail, admins, courier);
@@ -571,3 +571,4 @@ document.addEventListener("DOMContentLoaded", () => {
       updateCartDisplay();
     });
   }
+
