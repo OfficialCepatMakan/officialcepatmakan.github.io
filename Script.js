@@ -178,6 +178,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 if (checked) {
                   db.ref('Orders/' + id).update({ courier: mail })
                     .then(() => {
+                      console.log(mail)
                       alert("You took the order.");
                       fetchAndRenderOrders(mail, admins, courier);
                     });
@@ -571,4 +572,5 @@ document.addEventListener("DOMContentLoaded", () => {
       updateCartDisplay();
     });
   }
+
 
