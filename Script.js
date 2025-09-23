@@ -119,8 +119,8 @@ document.addEventListener("DOMContentLoaded", () => {
             EmailP = `<p><strong>Email:</strong> ${order.mail}</p>`;
           }
           let courierHTML = '';
+          const taken = order.courier && order.courier !== "";
           if (isCourier) {
-            const taken = order.courier && order.courier !== "";
             const isMine = order.courier === courier;
           
             courierHTML = `
@@ -131,7 +131,7 @@ document.addEventListener("DOMContentLoaded", () => {
               </label>
             `;
           }
-
+  
           if (taken && (admins.includes(mail) || isCourier)) {
             courierHTML += `<p><strong>Courier:</strong> ${order.courier}</p>`;
           }
@@ -571,6 +571,7 @@ document.addEventListener("DOMContentLoaded", () => {
       updateCartDisplay();
     });
   }
+
 
 
 
