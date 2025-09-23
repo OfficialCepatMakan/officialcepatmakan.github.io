@@ -130,13 +130,12 @@ document.addEventListener("DOMContentLoaded", () => {
                 ${isMine ? 'You took this order' : taken ? 'Taken by another courier' : 'Take this order'}
               </label>
             `;
-          
-            // Show badge of who’s handling it
-            if (taken) {
-              courierHTML += `<p><strong>Courier:</strong> ${order.courier}</p>`;
-            }
           }
-        
+
+          if (taken && (admins.includes(mail) || isCourier)) {
+            courierHTML += `<p><strong>Courier:</strong> ${order.courier}</p>`;
+          }
+          
           orderDiv.innerHTML = `
             <h4>${order.name} (${order.grade}-${order.class})</h4>
             <p><strong>Payment:</strong> ${order.paymentMethod}</p>
@@ -572,6 +571,7 @@ document.addEventListener("DOMContentLoaded", () => {
       updateCartDisplay();
     });
   }
+
 
 
 
