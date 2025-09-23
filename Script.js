@@ -82,7 +82,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const order = childSnapshot.val();
         const orderId = childSnapshot.key;
       
-        if (order.mail === mail || admins.includes(mail) || courier) {
+        if (order.mail === mail || admins.includes(mail) || isCourier) {
           const orderDiv = document.createElement('div');
           orderDiv.className = 'order-item';
         
@@ -571,6 +571,7 @@ document.addEventListener("DOMContentLoaded", () => {
       updateCartDisplay();
     });
   }
+
 
 
 
