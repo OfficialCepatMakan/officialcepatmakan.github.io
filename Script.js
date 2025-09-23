@@ -70,6 +70,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const ordersRef = db.ref('Orders');
     const ordersList = document.getElementById('orders-list');
     ordersList.innerHTML = ''; // clear existing orders
+    const isCourier = courier.includes(mail);
   
     ordersRef.once('value', (snapshot) => {
       if (!snapshot.exists()) {
@@ -116,10 +117,8 @@ document.addEventListener("DOMContentLoaded", () => {
               </button>`;
             EmailP = `<p><strong>Email:</strong> ${order.mail}</p>`;
           }
-        
-          // ✅ Courier checkbox
           let courierHTML = '';
-          if (courier) {
+          if (isCourier) {
             const taken = order.courier && order.courier !== "";
             const isMine = order.courier === courier;
           
@@ -168,7 +167,7 @@ document.addEventListener("DOMContentLoaded", () => {
           }
         
           // ✅ Attach courier checkbox logic
-          if (courier) {
+          if (isCourier) {
             const takeOrderCheckbox = orderDiv.querySelector('.take-order');
             if (takeOrderCheckbox) {
               takeOrderCheckbox.addEventListener('change', (e) => {
@@ -572,5 +571,6 @@ document.addEventListener("DOMContentLoaded", () => {
       updateCartDisplay();
     });
   }
+
 
 
