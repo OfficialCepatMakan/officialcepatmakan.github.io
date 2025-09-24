@@ -49,6 +49,7 @@
       border-radius: 15px; /* rounded corners */
       margin-bottom: 12px;
       min-height: 150px; /* just to give some vertical space */
+      box-shadow: rgba(0, 0, 0, 0.12) 0 5px 20px;
    }
     #orders-list {
       display: grid;
@@ -684,6 +685,7 @@
             grid-template-columns: 1fr;
         }
     }
+
 
 
 
