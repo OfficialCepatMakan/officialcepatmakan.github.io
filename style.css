@@ -404,8 +404,16 @@
       box-sizing: border-box;
     }
     .menu-item {
+      position: relative; /* for absolute positioning fallback */
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between; /* push stuff apart top-to-bottom */
+
       background: var(--card-bg);
-      padding: 16px;
+      padding: 16px; /* bumped to 16px for consistency */
+      margin-bottom: 12px;
+      min-height: 150px; /* keeps some vertical space */
+
       border-radius: 12px; /* rounded corners */
       box-shadow: rgba(0, 0, 0, 0.12) 0 5px 12px;
       transition: transform 0.2s ease, box-shadow 0.2s ease;
@@ -512,7 +520,7 @@
         color: var(--muted-text);
         font-size: 0.875rem;
     }
-       .item-stock {
+      .item-stock {
         color: var(--muted-text);
         font-size: 0.875rem;
         margin-bottom: 1rem;
@@ -524,13 +532,10 @@
         margin-bottom: 1rem;
     }
    .item-actions {
-     position: absolute;
-     bottom: 12px; /* same as padding */
-     left: 12px;
-     right: 12px;
      display: flex;
      justify-content: space-between;
      align-items: center;
+     margin-top: auto; /* pushes it to the bottom */
    }
     .quantity-controls {
         display: flex;
@@ -681,6 +686,7 @@
             grid-template-columns: 1fr;
         }
     }
+
 
 
 
