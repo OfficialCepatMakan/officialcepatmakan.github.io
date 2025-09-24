@@ -409,7 +409,7 @@
       background: var(--card-bg);
       padding: 16px;
       border-radius: 12px;
-      box-shadow: rgba(0, 0, 0, 0.12) 0 5px 12px;
+      box-shadow: rgba(0, 0, 0, 0.12) 0 5px 18px;
       transition: transform 0.2s ease, box-shadow 0.2s ease;
       min-height: 200px; /* so it doesn’t collapse */
     }
@@ -684,6 +684,7 @@
             grid-template-columns: 1fr;
         }
     }
+
 
 
 
