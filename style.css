@@ -533,9 +533,10 @@
     }
     .item-actions {
       display: flex;
-      justify-content: space-between;
+      justify-content: flex-end; /* push actions to the right */
       align-items: center;
-      margin-top: auto; /* pushes this section down */
+      gap: 8px; /* spacing between buttons or text */
+      margin-top: auto; /* stick to bottom of .menu-item */
     }
     .quantity-controls {
         display: flex;
@@ -686,6 +687,7 @@
             grid-template-columns: 1fr;
         }
     }
+
 
 
 
