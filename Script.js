@@ -124,6 +124,7 @@ document.addEventListener("DOMContentLoaded", () => {
             const isMine = order.courier === courier;
           
             courierHTML = `
+              <p><strong>Timestamp:</strong>${order.timestamp}<p>
               <label>
                 <input type="checkbox" class="take-order" data-id="${orderId}" 
                   ${isMine ? 'checked' : ''} ${taken && !isMine ? 'disabled' : ''}>
@@ -571,6 +572,7 @@ document.addEventListener("DOMContentLoaded", () => {
       updateCartDisplay();
     });
   }
+
 
 
 
