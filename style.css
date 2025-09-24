@@ -404,17 +404,17 @@
       box-sizing: border-box;
     }
     .menu-item {
-      position: relative; /* for absolute positioning fallback */
+      position: relative;
       display: flex;
       flex-direction: column;
-      justify-content: space-between; /* push stuff apart top-to-bottom */
-
+      justify-content: flex-start; /* keep content at top */
+  
       background: var(--card-bg);
-      padding: 16px; /* bumped to 16px for consistency */
+      padding: 16px;
       margin-bottom: 12px;
-      min-height: 150px; /* keeps some vertical space */
+      min-height: 150px;
 
-      border-radius: 12px; /* rounded corners */
+      border-radius: 12px;
       box-shadow: rgba(0, 0, 0, 0.12) 0 5px 12px;
       transition: transform 0.2s ease, box-shadow 0.2s ease;
     }
@@ -686,6 +686,7 @@
             grid-template-columns: 1fr;
         }
     }
+
 
 
 
