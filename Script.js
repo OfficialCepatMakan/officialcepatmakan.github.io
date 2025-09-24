@@ -493,7 +493,7 @@ document.addEventListener("DOMContentLoaded", () => {
         items: cart,
         total: cart.reduce((sum, item) => sum + item.price * item.quantity, 0),
         mail,
-        timestamp: new Date().toISOString()
+        timestamp: let formatted = new Date().toLocaleDateString("en-GB").slice(0, 8);
       };
 
       // ✅ Push order
@@ -572,6 +572,7 @@ document.addEventListener("DOMContentLoaded", () => {
       updateCartDisplay();
     });
   }
+
 
 
 
