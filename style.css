@@ -404,19 +404,14 @@
       box-sizing: border-box;
     }
     .menu-item {
-      position: relative;
       display: flex;
       flex-direction: column;
-      justify-content: flex-start; /* content stacks naturally at top */
-
       background: var(--card-bg);
       padding: 16px;
-      margin-bottom: 12px;
-      min-height: 150px;
-
       border-radius: 12px;
       box-shadow: rgba(0, 0, 0, 0.12) 0 5px 12px;
       transition: transform 0.2s ease, box-shadow 0.2s ease;
+      min-height: 200px; /* so it doesn’t collapse */
     }
     #dark-toggle {
       position: fixed;
@@ -493,6 +488,7 @@
     .item-content {
       display: flex;
       flex-direction: column;
+      flex: 1;            /* take up all leftover space */
     }
     .size-1 {
         width: 16px;
@@ -533,11 +529,10 @@
         margin-bottom: 1rem;
     }
     .item-actions {
+      margin-top: auto;   /* always stick to bottom */
       display: flex;
-      justify-content: flex-end; /* push actions to the right */
+      justify-content: space-between;
       align-items: center;
-      gap: 8px; /* spacing between buttons or text */
-      margin-top: auto; /* stick to bottom of .menu-item */
     }
     .quantity-controls {
         display: flex;
@@ -688,6 +683,7 @@
             grid-template-columns: 1fr;
         }
     }
+
 
 
 
