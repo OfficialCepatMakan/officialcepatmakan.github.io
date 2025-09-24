@@ -407,8 +407,8 @@
       position: relative;
       display: flex;
       flex-direction: column;
-      justify-content: flex-start; /* keep content at top */
-  
+      justify-content: flex-start; /* content stacks naturally at top */
+
       background: var(--card-bg);
       padding: 16px;
       margin-bottom: 12px;
@@ -686,6 +686,7 @@
             grid-template-columns: 1fr;
         }
     }
+
 
 
 
