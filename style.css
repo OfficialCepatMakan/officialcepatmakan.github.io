@@ -259,6 +259,7 @@
       object-fit: contain; /* keeps aspect ratio, no cropping */
       display: block;
       margin: 0 auto; /* centers image if smaller than container */
+      border-radius: 15px; /* rounded corners */
     }
     .googleSignInBtn {
       display: flex;
@@ -685,6 +686,7 @@
             grid-template-columns: 1fr;
         }
     }
+
 
 
 
