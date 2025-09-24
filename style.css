@@ -46,8 +46,6 @@
       background: var(--card-bg);
       justify-content: space-between; /* push stuff apart top-to-bottom */
       padding: 12px;
-      border: 1px solid var(--border-color);
-      border-radius: 6px;
       margin-bottom: 12px;
       min-height: 150px; /* just to give some vertical space */
    }
@@ -407,9 +405,7 @@
     .menu-item {
       border: 1px solid var(--border-color);
       background: var(--card-bg);
-      border-radius: 12px;
       padding: 16px;
-      box-shadow: var(--card-shadow);
       transition: transform 0.2s ease, box-shadow 0.2s ease;
     }
     #dark-toggle {
@@ -679,6 +675,7 @@
             grid-template-columns: 1fr;
         }
     }
+
 
 
 
