@@ -124,7 +124,6 @@ document.addEventListener("DOMContentLoaded", () => {
             const isMine = order.courier === courier;
           
             courierHTML = `
-              <p><strong>Timestamp:</strong>${order.timestamp}<p>
               <label>
                 <input type="checkbox" class="take-order" data-id="${orderId}" 
                   ${isMine ? 'checked' : ''} ${taken && !isMine ? 'disabled' : ''}>
@@ -142,6 +141,7 @@ document.addEventListener("DOMContentLoaded", () => {
             <p><strong>Payment:</strong> ${order.paymentMethod}</p>
             <p><strong>Items:</strong>${itemsHTML}</p>
             <p><strong>Total:</strong> Rp${order.total.toLocaleString()}</p>
+            <p><strong>Timestamp:</strong>${order.timestamp}<p>
             ${EmailP}
             ${courierHTML}
             ${deleteButtonHTML}
@@ -572,6 +572,7 @@ document.addEventListener("DOMContentLoaded", () => {
       updateCartDisplay();
     });
   }
+
 
 
 
