@@ -531,12 +531,12 @@
         gap: 0.5rem;
         margin-bottom: 1rem;
     }
-   .item-actions {
-     display: flex;
-     justify-content: space-between;
-     align-items: center;
-     margin-top: auto; /* pushes it to the bottom */
-   }
+    .item-actions {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: auto; /* pushes this section down */
+    }
     .quantity-controls {
         display: flex;
         align-items: center;
@@ -686,6 +686,7 @@
             grid-template-columns: 1fr;
         }
     }
+
 
 
 
