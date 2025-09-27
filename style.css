@@ -6,14 +6,15 @@
     }
     html, body {
       transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+      scroll-behavior: smooth;
     }
-
     *, *::before, *::after {
       transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
     }
     
     :root {
-      --bg-color: linear-gradient(135deg, #fef7ed 0%, #fef2f2 100%);
+      --bg-color: #fef2f2;
+      --bg-color-trans: #fef2f24c;
       --text-color: #333;
       --card-bg: #fff;
       --border-color: #ccc;
@@ -23,10 +24,14 @@
       --item-bg: #f3f4f6;
       --danger-color: #e00;
       --Symbols: black;
-
+      --transparent: rgba(255, 255, 255, 0.9);
+      --transparent2: rgba(255, 255, 255, 0.8);
+      --card: 270px;  /* change card width here */
+      --gap: 1rem;
     }
     :root.dark {
       --bg-color: #121212;
+      --bg-color-trans: #12121248;
       --text-color: #f5f5f5;
       --card-bg: #1e1e1e;
       --border-color: #333;
@@ -36,8 +41,40 @@
       --danger-color: #ff6b6b;
       --item-bg: #2a2a2a;
       --Symbols: white;
+      --transparent: rgba(0, 0, 0, 0.9);
+      --transparent2: rgba(0, 0, 0, 0.8);
+      --card: 270px;  /* change card width here */
+      --gap: 1rem;
     }
 
+    .menu-filters {
+      display: flex;
+      justify-content: center;   /* center buttons horizontally */
+      flex-wrap: wrap;           /* allow wrapping on small screens */
+      gap: 10px;
+      margin: 20px 0;
+      width: 100%;               /* always span container width */
+    }
+    .menu-filters-wrapper {
+      transform: translateX(40px); /* move right */
+      /* transform: translateX(-40px); move left */
+    }
+    .filter-btn {
+      padding: 8px 16px;
+      border: none;
+      border-radius: 20px;
+      cursor: pointer;
+      background: var(--transparent2);
+      backdrop-filter: blur(8px);
+      transition: 0.3s;
+      color: var(--text-color);
+    }
+
+    .filter-btn:hover,
+    .filter-btn.active {
+      background: orange;
+      color: var(--text-color);
+    }
 
     .order-item {
       position: relative; /* for absolute positioning fallback */
@@ -112,12 +149,62 @@
       left: -160px;
       width: 160px;
       height: calc(100vh - 64px);
-      background: var(--card-bg);
       box-shadow: 2px 0 5px rgba(0, 0, 0, 0.2);
       transition: left 0.3s ease;
       z-index: 100;
       overflow-y: auto;
+      background-color: var(--transparent2); /* Semi-transparent white */
+      -webkit-backdrop-filter: blur(10px); /* For Safari and older browsers */
+      backdrop-filter: blur(10px); /* Standard property */
     }
+    .hero {
+      height: 100vh; /* full screen hero */
+      background: linear-gradient(
+          var(--bg-color-trans), 
+          var(--bg-color)
+        ),
+        url('popcorn.jpg') center/cover no-repeat;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      color: #fff;
+      padding: 20px;
+    }
+
+    .hero-content h1 {
+      font-size: 3.5rem;
+      margin-bottom: 10px;
+      letter-spacing: 2px;
+      font-weight: 700;
+    }
+
+    .hero-content h1 .highlight {
+      color:var(--accent-color); /* pick your shade */
+    }
+
+    .hero-content p {
+      font-size: 1.25rem;
+      margin-bottom: 20px;
+      opacity: 0.9;
+    }
+
+    .hero-btn {
+      background: var(--accent-color); /* primary accent */
+      color: #fff;
+      padding: 12px 28px;
+      border-radius: 30px;
+      font-size: 1.1rem;
+      text-decoration: none;
+      font-weight: 600;
+      transition: background 0.3s ease, transform 0.2s ease;
+    }
+
+    .hero-btn:hover {
+      background: #e84118;
+      transform: translateY(-3px);
+    }
+
     .cart-content {
       max-height: 200vh; /* Or whatever you want */
       overflow-y: auto;
@@ -197,11 +284,10 @@
     .menu-btn {
       position: fixed;
       top: 63px;
-      left: 0px;;
+      left: 0px;
       width: 40px;
       height: 40px;
       font-size: 24px;
-      background: var(--card-bg);
       color: var(--Symbols);
       border-radius: 0 5px 5px 0;
       cursor: pointer;
@@ -209,9 +295,52 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      border: none;        /* remove border */
-      box-shadow: none;    /* remove shadow */
+      border: none;
+      box-shadow: none;
+      background-color: var(--transparent2);
+      -webkit-backdrop-filter: blur(10px);
+      backdrop-filter: blur(10px);
       transition: left 0.3s ease;
+    }
+
+    /* notification badge */
+    .menu-btn::after {
+      content: "";
+      position: absolute;
+      top: 6px;   /* tweak positioning */
+      right: 6px;
+      width: 10px;
+      height: 10px;
+      background: var(--accent-color);
+      border-radius: 50%;
+      display: none; /* hidden until triggered */
+    }
+
+    #btn-cart {
+      position: relative; /* important so badge positions correctly */
+    }
+
+    /* notification badge */
+    #btn-cart::after {
+      content: "";
+      position: absolute;
+      top: 4px;   /* adjust depending on your button size */
+      right: 4px;
+      width: 10px;
+      height: 10px;
+      background: var(--accent-color);
+      border-radius: 50%;
+      display: none; /* hidden by default */
+    }
+
+    /* show the badge */
+    #btn-cart.has-notification::after {
+      display: block;
+    }
+
+    /* show the badge */
+    .menu-btn.has-notification::after {
+      display: block;
     }
 
     .menu-btn.show {
@@ -221,7 +350,6 @@
       width: 40px;
       height: 40px;
       font-size: 24px;
-      background: var(--card-bg);
       color: var(--var(--Symbols));
       border-radius: 0 5px 5px 0;
       cursor: pointer;
@@ -229,6 +357,9 @@
       display: flex;
       align-items: center;
       justify-content: center;
+      background-color: var(--transparent2); /* Semi-transparent white */
+      -webkit-backdrop-filter: blur(10px); /* For Safari and older browsers */
+      backdrop-filter: blur(10px); /* Standard property */
       border: none;        /* remove border */
       box-shadow: none;    /* remove shadow */
     }
@@ -248,7 +379,12 @@
       cursor: pointer;
       border: none;
       background: none;
-      text-align: left;
+      color: var(--text-color);
+    
+      display: flex;             /* make icon + text align properly */
+      align-items: center;       /* vertically center */
+      gap: 8px;                  /* space between icon and text */
+      text-align: left;          /* text still left-aligned */
     }
 
     .item-image img {
@@ -311,6 +447,9 @@
       top: 0;
       z-index: 10000;
       height: 64px; /* make sure header height is explicit */
+      background-color: var(--transparent); /* Semi-transparent white */
+      -webkit-backdrop-filter: blur(10px); /* For Safari and older browsers */
+      backdrop-filter: blur(10px); /* Standard property */
     }
     .header-content {
         display: flex;
@@ -396,16 +535,57 @@
         padding: 0.25rem 0.5rem;
         border-radius: 9999px;
     }
+
+    /* Container that holds the grid and keeps it centered */
     .menu-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(270px, 1fr));
-      gap: 1rem;
-      width: 100%;
-      max-width: 100vw;
+      gap: var(--gap);
       padding: 1rem;
       box-sizing: border-box;
+      margin: 0 auto;              /* center the whole grid block */
+      justify-items: center;       /* center content inside each cell */
+      align-items: start;
+      width: 100%;
+      /* default to 1 column max-width */
+      max-width: calc(var(--card) + (var(--gap) * 0));
     }
+
+    /* 2 columns */
+    @media (min-width: 560px) {
+      .menu-grid {
+        grid-template-columns: repeat(2, var(--card));
+        max-width: calc(var(--card) * 2 + var(--gap) * 1);
+      }
+    }
+
+    /* 3 columns */
+    @media (min-width: 900px) {
+      .menu-grid {
+        grid-template-columns: repeat(3, var(--card));
+        max-width: calc(var(--card) * 3 + var(--gap) * 2);
+      }
+    }
+
+    /* 4 columns */
+    @media (min-width: 1250px) {
+      .menu-grid {
+        grid-template-columns: repeat(4, var(--card));
+        max-width: calc(var(--card) * 4 + var(--gap) * 3);
+      }
+    }
+
+    /* optional: 5 columns on huge screens */
+    @media (min-width: 1600px) {
+      .menu-grid {
+        grid-template-columns: repeat(5, var(--card));
+        max-width: calc(var(--card) * 5 + var(--gap) * 4);
+      }
+    }
+
+    /* Make each card fill its grid cell cleanly */
     .menu-item {
+      width: 100%;
+      max-width: var(--card);
       display: flex;
       flex-direction: column;
       background: var(--card-bg);
@@ -657,6 +837,25 @@
         background: var(--border-color);
         cursor: not-allowed;
     }
+    .hero-content h1, 
+    .hero-content p, 
+    .hero-btn {
+      opacity: 0;
+      transform: translateY(50px);
+      animation: flyIn 1s ease forwards;
+    }
+
+    .hero-content h1 { animation-delay: 0.2s; }
+    .hero-content p { animation-delay: 0.4s; }
+    .hero-btn { animation-delay: 0.6s; }
+
+    @keyframes flyIn {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
     /* Responsive */
     @media (max-width: 1024px) {
         .main-content {
@@ -686,23 +885,3 @@
             grid-template-columns: 1fr;
         }
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
