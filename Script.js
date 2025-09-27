@@ -9,12 +9,29 @@ const orderBtn = document.getElementById("btn-order")
 const cartBtn = document.getElementById("btn-cart");
 const orderSection = document.getElementById("orders-section")
 const floatBtn = document.getElementById("dark-toggle")
+const gradeSelect = document.getElementById("grade");
+const classGroup = document.getElementById("class-group");
+const othersGroup = document.getElementById("others-group");
+const tutorial = document.getElementById("btn-tutorial")
+const menuBtn3 = document.querySelector(".menu-btn");
+const btnCart = document.getElementById("btn-cart");
+let cart = []
+loadMenu("all");
 
+gradeSelect.addEventListener("change", function () {
+  if (this.value === "Others") {
+    classGroup.style.display = "none";
+    othersGroup.style.display = "flex";
+  } else {
+    classGroup.style.display = "flex";
+    othersGroup.style.display = "none";
+  }
+});
 
 const sections = {
-  home: document.getElementById("home-section"),
-  cart: document.getElementById("cart-section"),
-  orders: document.getElementById("orders-section")
+  home: [document.getElementById("home-section")],
+  cart: [document.getElementById("cart-section")],
+  orders: [document.getElementById("orders-section")]
 };
 
 menuBtn.addEventListener("click", () => {
@@ -24,16 +41,43 @@ menuBtn.addEventListener("click", () => {
 
 function hideAllSections() {
   for (let key in sections) {
-    sections[key].style.display = "none";
+    sections[key].forEach(el => el.style.display = "none");
   }
 }
+sidePanel.querySelectorAll(".nav-buttons button").forEach(btn => {
+  btn.addEventListener("click", () => {
+    const section = btn.getAttribute("data-section");
+    menuBtn3.classList.remove("has-notification");
+    btnCart.classList.remove("has-notification");
+
+    hideAllSections();
+    sections[section].forEach(el => el.style.display = "block"); // ✅ works for grouped ones
+  });
+});
+
+// Grab all filter buttons
+const filterBtns = document.querySelectorAll(".filter-btn");
+
+filterBtns.forEach(btn => {
+  btn.addEventListener("click", () => {
+    // remove active from all
+    filterBtns.forEach(b => b.classList.remove("active"));
+    // add active to the clicked one
+    btn.classList.add("active");
+    const filter = btn.getAttribute("data-filter");
+    loadMenu(filter);
+  });
+});
 
 sidePanel.querySelectorAll(".nav-buttons button").forEach(btn => {
   btn.addEventListener("click", () => {
     const section = btn.getAttribute("data-section");
+    menuBtn3.classList.remove("has-notification");
+    btnCart.classList.remove("has-notification");
+    console.log("removing notif");
+
     hideAllSections();
-    sections[section].style.display = "block";
-    sidePanel.classList.remove("show");
+    sections[section].forEach(el => el.style.display = "block"); // ✅ works for grouped ones
   });
 });
 
@@ -196,8 +240,6 @@ document.addEventListener("DOMContentLoaded", () => {
       });
     });
   }
-  
-    
 
     document.getElementById('order-btn').addEventListener('click', function () {
       if (cart.length === 0) {
@@ -319,31 +361,37 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });  
   
-  const mainCourseRef = db.ref('menu/main_course');
-    let cart = []
-  
-    function changeQty(i,delta){
+  function loadMenu(filter) {
+    const mainCourseRef = db.ref('menu/main_course');
+
+    function changeQty(i, delta) {
       cart[i].qty += delta;
-      if(cart[i].qty<1) cart.splice(i,1);
+      if (cart[i].qty < 1) cart.splice(i, 1);
       renderCart();
     }
-  
+
     mainCourseRef.once('value', (snapshot) => {
       const items = snapshot.val();
       const menuGrid = document.querySelector('.menu-grid');
       let count = 0;
-    
+
       menuGrid.innerHTML = ''; // Clear existing items
-    
+
       for (let key in items) {
         const item = items[key];
-        const menuItem = createMenuItem(key, item);
-        menuGrid.appendChild(menuItem);
-        count++;
+
+        // Check filter (if "all", show everything)
+        if (filter === "all" || item.filter === filter) {
+          const menuItem = createMenuItem(key, item);
+          menuGrid.appendChild(menuItem);
+          count++;
+        }
       }
-  
-    document.querySelector('.item-count').textContent = `${count} items`;
-  });
+
+      document.querySelector('.item-count').textContent = `${count} items`;
+    });
+  }
+
 
   function createMenuItem(key, item) {
     const menuItem = document.createElement('div');
@@ -548,8 +596,13 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     addToCartBtn.addEventListener('click', () => {
-      if (quantity === 0) return;
-
+      if (quantity <= 0) {
+        quantity = 1;
+      }
+      if (quantity > stock) {
+        alert("This is the maximum stock!");
+        return
+      }   
       const existing = cart.find(c => c.key === key);
       if (existing) {
         existing.quantity += quantity;
@@ -562,6 +615,9 @@ document.addEventListener("DOMContentLoaded", () => {
           quantity: quantity,
           stock: item.stock
         });
+        alert("Item has been added to cart, press the 3 dots button to open cart")
+        document.getElementById("btn-cart").classList.add("has-notification");
+        menuBtn3.classList.add("has-notification");
       }
 
       // Reset
@@ -573,13 +629,6 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-
-
-
-
-
-
-
-
-
-
+setInterval(() => {
+  fetchAndRenderOrders(); 
+}, 10000);
