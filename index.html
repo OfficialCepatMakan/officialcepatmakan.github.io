@@ -17,15 +17,7 @@
     <header class="header">
         <div class="header-content">
             <div class="logo-section">
-                <div class="logo-icon">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 10.5V6a3.75 3.75 0 1 0-7.5 0v4.5m11.356-1.993 1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 0 1-1.12-1.243l1.264-12A1.125 1.125 0 0 1 5.513 7.5h12.974c.576 0 1.059.435 1.119 1.007ZM8.625 10.5a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm7.5 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Z" />
-                    </svg>
-                </div>
-                <div class="logo-text">
-                    <h1>CepatMakan</h1>
-                    <p>Fast Food Delivery</p>
-                </div>
+                  <img src="Logo_text.png" alt="Cepatmakan text" style="width: 150px;">
             </div>
             <div class="header-info">
                     <div id="authContainer">
@@ -37,39 +29,74 @@
                 </div>
             </div>
         </div>
-    </header>
-    <!-- Menu Button -->
-    <div>
-        <!-- Entire sliding panel (contains button + nav) -->
         <button id="menu-button" class="menu-btn">⋮</button>
         <div id="side-panel" class="side-panel">
           <div class="nav-buttons">
-            <button data-section="home" id="btn-menu" ><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" style="width: 20px; height: 20px;"><path strokeLinecap="round" strokeLinejoin="round" d="m2.25 12 8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25" /></svg><p>Home</p></button>
-            <button data-section="cart" id="btn-cart" ><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" style="width: 20px; height: 20px;"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 0 0-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 0 0-16.536-1.84M7.5 14.25 5.106 5.272M6 20.25a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Zm12.75 0a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Z" /></svg><p>Cart</p></button>
-            <button data-section="orders" id="btn-order" ><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" style="width: 20px; height: 20px;"><path stroke-linecap="round" stroke-linejoin="round" d="m20.25 7.5-.625 10.632a2.25 2.25 0 0 1-2.247 2.118H6.622a2.25 2.25 0 0 1-2.247-2.118L3.75 7.5M10 11.25h4M3.375 7.5h17.25c.621 0 1.125-.504 1.125-1.125v-1.5c0-.621-.504-1.125-1.125-1.125H3.375c-.621 0-1.125.504-1.125 1.125v1.5c0 .621.504 1.125 1.125 1.125Z" /></svg><p>Orders</p></button>
+            <button data-section="home" id="btn-menu">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" style="width: 20px; height: 20px;">
+                <path stroke-linecap="round" stroke-linejoin="round" d="m2.25 12 8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25" />
+              </svg>
+              <p>Home</p>
+            </button>
+
+            <button data-section="cart" id="btn-cart">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" style="width: 20px; height: 20px;">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 0 0-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 0 0-16.536-1.84M7.5 14.25 5.106 5.272M6 20.25a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Zm12.75 0a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Z" />
+              </svg>
+              <p>Cart</p>
+            </button>
+
+            <button data-section="orders" id="btn-order">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" style="width: 20px; height: 20px;">
+                <path stroke-linecap="round" stroke-linejoin="round" d="m20.25 7.5-.625 10.632a2.25 2.25 0 0 1-2.247 2.118H6.622a2.25 2.25 0 0 1-2.247-2.118L3.75 7.5M10 11.25h4M3.375 7.5h17.25c.621 0 1.125-.504 1.125-1.125v-1.5c0-.621-.504-1.125-1.125-1.125H3.375c-.621 0-1.125.504-1.125 1.125v1.5c0 .621.504 1.125 1.125 1.125Z" />
+              </svg>
+              <p>Orders</p>
+            </button>
+
+            <button data-section="tutorial" id="btn-tutorial">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" style="width: 20px; height: 20px;">
+                <path stroke-linecap="round" stroke-linejoin="round" d="m11.25 11.25.041-.02a.75.75 0 0 1 1.063.852l-.708 2.836a.75.75 0 0 0 1.063.853l.041-.021M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9-3.75h.008v.008H12V8.25Z" />
+              </svg>
+              <p>WIP</p>
+            </button>
           </div>
         </div>
+    </header>
+    <div id="home-section">
+      <div class="hero">
+        <div class="hero-content">
+          <h1><span class="highlight">Cepat</span>Makan</h1>
+          <p>Where tasty food comes with speed</p>
+          <a href="#menu-section" class="hero-btn">Order Now</a>
+        </div>
+      </div>
     </div>
 
-
-    <!-- Main Content -->
     <div class="main-content">
-        <!-- Menu Section -->
-        <section class="menu-section" id="menu-section">
-            <h2>Our Menu</h2>
-            
-            <!-- Main Course -->
-            <div class="category-section">
-                <div class="category-header">
-                    <h3>Products</h3>
-                    <span class="item-count">4 items</span>
-                </div>
-                <div class="menu-grid">
-                    <!-- This Section Will Be Full Once The Products Are Loaded -->
-                </div>
-            </div>
-        </section>
+      <!-- Menu Section -->
+      <section class="menu-section" id="menu-section">
+        <div class="menu-filters-wrapper">
+         <h1 style="text-align: center; padding-top: 10px;">Our Originals</h1>
+          
+         <!-- Filter Bar -->
+         <div class="menu-filters">
+           <button class="filter-btn active" data-filter="all">All</button>
+           <button class="filter-btn" data-filter="food">Food</button>
+           <button class="filter-btn" data-filter="drink">Drinks</button>
+         </div>
+        </div>
+      
+        <!-- Main Course -->
+        <div class="category-section">
+          <div class="category-header">
+          </div>
+          <div class="menu-grid">
+            <!-- This Section Will Be Full Once The Products Are Loaded -->
+          </div>
+        </div>
+      </section>
     </div>
+
 
     <aside class="cart-section" id="cart-section" style="display: none;">
         <!-- Cart Section -->
@@ -105,30 +132,42 @@
                     <div class="form-section">
                         <div class="form-grid">
                             <div class="form-group">
-                                <label class="form-label">Grade *</label>
-                                <select class="form-select" id="grade">
-                                    <option value="">Select Grade</option>
-                                    <option value="7">Grade 7</option>
-                                    <option value="8">Grade 8</option>
-                                    <option value="9">Grade 9</option>
-                                    <option value="Teacher">Teacher</option>
-                                </select>
+                              <label class="form-label">Grade *</label>
+                              <select class="form-select" id="grade">
+                                <option value="">Select Grade</option>
+                                <option value="7">Grade 7</option>
+                                <option value="8">Grade 8</option>
+                                <option value="9">Grade 9</option>
+                                <option value="Others">Others (eg. teacher)</option>
+                              </select>
                             </div>
-                            <div class="form-group">
-                                <label class="form-label">Class *</label>
-                                <select class="form-select" id="class">
-                                    <option value="">Select Class</option>
-                                    <option value="Ruang guru">Ruang guru</option>
-                                    <option value="A">Class A</option>
-                                    <option value="B">Class B</option>
-                                    <option value="C">Class C</option>
-                                    <option value="D">Class D</option>
-                                    <option value="E">Class E</option>
-                                    <option value="F">Class F</option>
-                                    <option value="G">Class G</option>
-                                    <option value="H">Class H</option>
-                                </select>
+                            
+                            <div class="form-group" id="class-group">
+                              <label class="form-label">Class *</label>
+                              <select class="form-select" id="class">
+                                <option value="">Select Class</option>
+                                <option value="A">Class A</option>
+                                <option value="B">Class B</option>
+                                <option value="C">Class C</option>
+                                <option value="D">Class D</option>
+                                <option value="E">Class E</option>
+                                <option value="F">Class F</option>
+                                <option value="G">Class G</option>
+                                <option value="H">Class H</option>
+                              </select>
                             </div>
+                            
+                            <div class="form-group" id="others-group" style="display:none;">
+                              <label class="form-label">Location *</label>
+                              <select class="form-select" id="location">
+                                <option value="">Select Location</option>
+                                <option value="ruang-guru">Ruang Guru</option>
+                                <option value="auditorium">Auditorium</option>
+                                <option value="kantin">Kantin</option>
+                                <option value="perpustakaan">Perpustakaan</option>
+                              </select>
+                            </div>
+                            
                             <div class="form-group">
                                 <label class="form-label">Payment methods *</label>
                                 <select class="form-select" id="paymentmethod">
@@ -173,12 +212,3 @@
 
 </body>
 </html>
-
-
-
-
-
-
-
-
-
