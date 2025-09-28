@@ -7,6 +7,7 @@
     html, body {
       transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
       scroll-behavior: smooth;
+      overflow-x: hidden; /* stop sideways scroll */
     }
     *, *::before, *::after {
       transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
@@ -93,6 +94,9 @@
       grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
       gap: 1rem;
       padding: 1rem;
+    }
+    .orange-text {
+      color: var(--accent-color);
     }
     .remove-order {
       align-self: flex-end; /* push button to right */
@@ -445,13 +449,17 @@
       background: var(--card-bg);
       box-shadow: 0 1px 3px rgba(0,0,0,0.1);
       border-bottom: 1px solid var(--item-bg);
-      position: sticky;
+    
+      position: fixed;   /* <— fixed instead of sticky */
       top: 0;
+      left: 0;
+      width: 100%;
       z-index: 10000;
-      height: 64px; /* make sure header height is explicit */
-      background-color: var(--transparent); /* Semi-transparent white */
-      -webkit-backdrop-filter: blur(10px); /* For Safari and older browsers */
-      backdrop-filter: blur(10px); /* Standard property */
+    
+      height: 64px; /* explicit header height */
+      background-color: var(--transparent); /* Semi-transparent */
+      -webkit-backdrop-filter: blur(10px);
+      backdrop-filter: blur(10px);
     }
     .header-content {
         display: flex;
