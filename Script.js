@@ -44,6 +44,41 @@ function hideAllSections() {
     sections[key].forEach(el => el.style.display = "none");
   }
 }
+
+function renderAdminItemSummary(ordersSnapshot, ordersList) {
+  const itemCounts = {};
+
+  // Loop through all orders
+  ordersSnapshot.forEach((childSnapshot) => {
+    const order = childSnapshot.val();
+    if (!order.items) return;
+
+    order.items.forEach((item) => {
+      if (itemCounts[item.name]) {
+        itemCounts[item.name] += item.quantity;
+      } else {
+        itemCounts[item.name] = item.quantity;
+      }
+    });
+  });
+
+  // Create summary container
+  const summaryDiv = document.createElement('div');
+  summaryDiv.className = 'admin-summary';
+  summaryDiv.innerHTML = `<h3>Admin Summary</h3><hr>`;
+
+  // Add each item and quantity
+  for (const [itemName, quantity] of Object.entries(itemCounts)) {
+    const p = document.createElement('p');
+    p.textContent = `${itemName}: ${quantity}`;
+    summaryDiv.appendChild(p);
+  }
+
+  // Append to orders list
+  ordersList.appendChild(summaryDiv);
+}
+
+
 sidePanel.querySelectorAll(".nav-buttons button").forEach(btn => {
   btn.addEventListener("click", () => {
     const section = btn.getAttribute("data-section");
@@ -195,6 +230,7 @@ document.addEventListener("DOMContentLoaded", () => {
         
           // ✅ Attach delete listener if button exists
           if (admins.includes(mail)) {
+            renderAdminItemSummary(snapshot, ordersList);
             const deleteBtn = orderDiv.querySelector('.remove-order');
             deleteBtn.addEventListener('click', () => {
               if (!confirm("Are you sure you want to delete this order?")) return;
@@ -632,3 +668,4 @@ document.addEventListener("DOMContentLoaded", () => {
 setInterval(() => {
   fetchAndRenderOrders(); 
 }, 10000);
+
