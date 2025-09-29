@@ -250,10 +250,10 @@ document.addEventListener("DOMContentLoaded", () => {
           }
         }
       });
+      if (admins.includes(mail)){
+        renderAdminItemSummary(snapshot, ordersList);
+      }
     });
-    if (admins.includes(mail)){
-      renderAdminItemSummary(snapshot, ordersList);
-    }
   }
 
     document.getElementById('order-btn').addEventListener('click', function () {
@@ -647,6 +647,7 @@ document.addEventListener("DOMContentLoaded", () => {
 setInterval(() => {
   fetchAndRenderOrders(); 
 }, 10000);
+
 
 
 
