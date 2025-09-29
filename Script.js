@@ -45,50 +45,27 @@ function hideAllSections() {
   }
 }
 
-function renderAdminItemSummary(ordersSnapshot, ordersList) {
+function renderAdminItemSummary(snapshot, ordersList) {
   const itemCounts = {};
 
-  // Loop through all orders
-  ordersSnapshot.forEach((childSnapshot) => {
+  snapshot.forEach(childSnapshot => {
     const order = childSnapshot.val();
-    if (!order.items) return;
-
-    order.items.forEach((item) => {
-      if (itemCounts[item.name]) {
-        itemCounts[item.name] += item.quantity;
-      } else {
-        itemCounts[item.name] = item.quantity;
-      }
+    order.items.forEach(item => {
+      if (!itemCounts[item.name]) itemCounts[item.name] = 0;
+      itemCounts[item.name] += item.quantity;
     });
   });
 
-  // Create summary container
   const summaryDiv = document.createElement('div');
   summaryDiv.className = 'admin-summary';
-  summaryDiv.innerHTML = `<h3>Admin Summary</h3><hr>`;
+  summaryDiv.innerHTML = '<h3>Item Summary</h3>';
 
-  // Add each item and quantity
-  for (const [itemName, quantity] of Object.entries(itemCounts)) {
-    const p = document.createElement('p');
-    p.textContent = `${itemName}: ${quantity}`;
-    summaryDiv.appendChild(p);
+  for (const [item, count] of Object.entries(itemCounts)) {
+    summaryDiv.innerHTML += `<p>${item}: ${count}</p>`;
   }
 
-  // Append to orders list
   ordersList.appendChild(summaryDiv);
 }
-
-
-sidePanel.querySelectorAll(".nav-buttons button").forEach(btn => {
-  btn.addEventListener("click", () => {
-    const section = btn.getAttribute("data-section");
-    menuBtn3.classList.remove("has-notification");
-    btnCart.classList.remove("has-notification");
-
-    hideAllSections();
-    sections[section].forEach(el => el.style.display = "block"); // ✅ works for grouped ones
-  });
-});
 
 // Grab all filter buttons
 const filterBtns = document.querySelectorAll(".filter-btn");
@@ -274,7 +251,6 @@ document.addEventListener("DOMContentLoaded", () => {
         }
       });
     });
-
     if (admins.includes(mail)){
       renderAdminItemSummary(snapshot, ordersList);
     }
@@ -671,5 +647,6 @@ document.addEventListener("DOMContentLoaded", () => {
 setInterval(() => {
   fetchAndRenderOrders(); 
 }, 10000);
+
 
 
