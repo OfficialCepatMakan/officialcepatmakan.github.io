@@ -230,7 +230,6 @@ document.addEventListener("DOMContentLoaded", () => {
         
           // ✅ Attach delete listener if button exists
           if (admins.includes(mail)) {
-            renderAdminItemSummary(snapshot, ordersList);
             const deleteBtn = orderDiv.querySelector('.remove-order');
             deleteBtn.addEventListener('click', () => {
               if (!confirm("Are you sure you want to delete this order?")) return;
@@ -275,6 +274,10 @@ document.addEventListener("DOMContentLoaded", () => {
         }
       });
     });
+
+    if (admins.includes(mail)){
+      renderAdminItemSummary(snapshot, ordersList);
+    }
   }
 
     document.getElementById('order-btn').addEventListener('click', function () {
@@ -668,4 +671,5 @@ document.addEventListener("DOMContentLoaded", () => {
 setInterval(() => {
   fetchAndRenderOrders(); 
 }, 10000);
+
 
