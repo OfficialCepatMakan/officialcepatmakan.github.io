@@ -256,12 +256,6 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  setInterval(() => {
-    const user = firebase.auth().currentUser;
-    fetchAndRenderOrders(user.email, adminEmails, courierEmails);
-  }, 5000);
-
-
     document.getElementById('order-btn').addEventListener('click', function () {
       if (cart.length === 0) {
         alert("Your cart is empty!");
@@ -334,6 +328,10 @@ document.addEventListener("DOMContentLoaded", () => {
         menuSection.style.display = "none";
         cartSection.style.display = "none";
       });
+      setInterval(() => {
+        const user = firebase.auth().currentUser;
+        fetchAndRenderOrders(user.email, adminEmails, courierEmails);
+      }, 5000);
 
     auth.onAuthStateChanged((user) => {
       if (user) {
@@ -649,6 +647,7 @@ document.addEventListener("DOMContentLoaded", () => {
       updateCartDisplay();
     });
   }
+
 
 
 
