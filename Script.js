@@ -320,6 +320,10 @@ document.addEventListener("DOMContentLoaded", () => {
         const user = firebase.auth().currentUser;
         if (user && user.email) {
           fetchAndRenderOrders(user.email, adminEmails, courierEmails);
+          setInterval(() => {
+            const user = firebase.auth().currentUser;
+            fetchAndRenderOrders(user.email, adminEmails, courierEmails);
+          }, 5000);
           
         } else {
           console.error("No user signed in");
@@ -328,10 +332,6 @@ document.addEventListener("DOMContentLoaded", () => {
         menuSection.style.display = "none";
         cartSection.style.display = "none";
       });
-      setInterval(() => {
-        const user = firebase.auth().currentUser;
-        fetchAndRenderOrders(user.email, adminEmails, courierEmails);
-      }, 5000);
 
     auth.onAuthStateChanged((user) => {
       if (user) {
@@ -647,6 +647,7 @@ document.addEventListener("DOMContentLoaded", () => {
       updateCartDisplay();
     });
   }
+
 
 
 
