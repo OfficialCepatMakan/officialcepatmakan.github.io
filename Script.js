@@ -257,7 +257,8 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   setInterval(() => {
-    fetchAndRenderOrders(); 
+    const user = firebase.auth().currentUser;
+    fetchAndRenderOrders(user.email, adminEmails, courierEmails);
   }, 5000);
 
 
@@ -648,6 +649,7 @@ document.addEventListener("DOMContentLoaded", () => {
       updateCartDisplay();
     });
   }
+
 
 
 
