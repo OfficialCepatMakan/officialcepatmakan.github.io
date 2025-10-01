@@ -256,6 +256,11 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
+  setInterval(() => {
+    fetchAndRenderOrders(); 
+  }, 5000);
+
+
     document.getElementById('order-btn').addEventListener('click', function () {
       if (cart.length === 0) {
         alert("Your cart is empty!");
@@ -644,9 +649,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-setInterval(() => {
-  fetchAndRenderOrders(); 
-}, 10000);
+
 
 
 
