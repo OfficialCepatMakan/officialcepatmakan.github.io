@@ -176,7 +176,10 @@
       padding: 20px;
       transform: translateY(-70px);
     }
-
+    #orders-list {
+      max-height: 500px; /* or whatever fits your layout */
+      overflow-y: auto;
+    }
     .hero-content h1 {
       font-size: 3.5rem;
       margin-bottom: 10px;
@@ -895,3 +898,4 @@
             grid-template-columns: 1fr;
         }
     }
+
