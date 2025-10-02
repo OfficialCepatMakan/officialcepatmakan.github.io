@@ -94,7 +94,7 @@
       grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
       gap: 1rem;
       padding: 1rem;
-      max-height: 2000px; /* or whatever fits your layout */
+      max-height: 100vh; /* or whatever fits your layout */
       overflow-y: auto;
     }
     .orange-text {
@@ -896,5 +896,6 @@
             grid-template-columns: 1fr;
         }
     }
+
 
 
