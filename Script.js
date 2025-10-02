@@ -127,6 +127,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const ordersList = document.getElementById('orders-list');
     ordersList.innerHTML = ''; // clear existing orders
     const isCourier = courier.includes(mail);
+    const scrollPos = ordersList.scrollTop;
   
     ordersRef.once('value', (snapshot) => {
       if (!snapshot.exists()) {
@@ -250,6 +251,7 @@ document.addEventListener("DOMContentLoaded", () => {
           }
         }
       });
+      ordersList.scrollTop = scrollPos;
       if (admins.includes(mail)){
         renderAdminItemSummary(snapshot, ordersList);
       }
@@ -647,6 +649,7 @@ document.addEventListener("DOMContentLoaded", () => {
       updateCartDisplay();
     });
   }
+
 
 
 
