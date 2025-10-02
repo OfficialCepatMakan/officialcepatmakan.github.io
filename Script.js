@@ -125,9 +125,10 @@ document.addEventListener("DOMContentLoaded", () => {
     console.log(admins);
     const ordersRef = db.ref('Orders');
     const ordersList = document.getElementById('orders-list');
+    const scrollPos = ordersList.scrollTop;
+    console.log(scrollPos)
     ordersList.innerHTML = ''; // clear existing orders
     const isCourier = courier.includes(mail);
-    const scrollPos = ordersList.scrollTop;
   
     ordersRef.once('value', (snapshot) => {
       if (!snapshot.exists()) {
@@ -649,6 +650,7 @@ document.addEventListener("DOMContentLoaded", () => {
       updateCartDisplay();
     });
   }
+
 
 
 
