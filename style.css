@@ -132,6 +132,15 @@
       flex-direction: column;
       gap: 0.5rem;
     }
+    .date-separator {
+      display: block;     /* force full row */
+      width: 100%;        /* span across */
+      font-weight: bold;
+      font-size: 1.2em;
+      margin: 20px 0 10px;
+      color: #333;
+      flex-basis: 100%;
+    }
 
     .order-card:hover {
       transform: scale(1.02);
@@ -927,6 +936,7 @@
             grid-template-columns: 1fr;
         }
     }
+
 
 
 
