@@ -144,7 +144,7 @@
       margin: 20px 0 10px 0;
       border-bottom: 2px solid #ccc;
       padding: 5px 0;
-      background: #f9f9f9;
+      color: var(--muted-text)
     }
 
     .orders-container {
@@ -923,6 +923,7 @@
             grid-template-columns: 1fr;
         }
     }
+
 
 
 
