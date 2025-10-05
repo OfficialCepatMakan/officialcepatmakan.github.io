@@ -205,6 +205,10 @@ document.addEventListener("DOMContentLoaded", () => {
             ${deleteButtonHTML}
           `;
         
+          const label = formatDateLabel(order.timestamp);
+          if (!groups[label]) groups[label] = [];
+          groups[label].push(orderDiv);
+        
           // ✅ Attach delete listener if button exists
           if (admins.includes(mail)) {
             const deleteBtn = orderDiv.querySelector('.remove-order');
@@ -250,6 +254,19 @@ document.addEventListener("DOMContentLoaded", () => {
           }
         }
       });
+      Object.keys(groups).forEach((label) => {
+        const section = document.createElement('div');
+        section.className = "order-section";
+            
+        const header = document.createElement('h3');
+        header.textContent = label;
+        section.appendChild(header);
+            
+        groups[label].forEach(div => section.appendChild(div));
+        ordersList.appendChild(section);
+      });
+      
+
       ordersList.scrollTop = scrollPos;
       if (admins.includes(mail)){
         renderAdminItemSummary(snapshot, ordersList);
@@ -648,4 +665,3 @@ document.addEventListener("DOMContentLoaded", () => {
       updateCartDisplay();
     });
   }
-
