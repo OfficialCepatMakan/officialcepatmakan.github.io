@@ -136,15 +136,16 @@
       margin-bottom: 30px;
     }
 
-    .date-separator {
+    .date-divider {
+      width: 100%;              /* stretch across */
+      text-align: center;       /* center the date text */
       font-weight: bold;
-      font-size: 1.2em;
-      margin: 10px 0;
-      padding: 5px 10px;
-      background: #f0f0f0;
-      border-radius: 6px;
+      font-size: 1.2rem;
+      margin: 20px 0 10px 0;    /* spacing above/below */
+      border-bottom: 2px solid #ccc; /* optional underline */
+      padding: 5px 0;
+      background: #f9f9f9;      /* subtle bg so it looks like a header */
     }
-
     .orders-container {
       display: flex;
       flex-direction: column; /* stack cards vertically */
@@ -928,6 +929,7 @@
             grid-template-columns: 1fr;
         }
     }
+
 
 
 
