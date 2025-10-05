@@ -147,11 +147,9 @@
 
     .orders-container {
       display: flex;
-      flex-wrap: wrap;
-      gap: 10px; /* keeps your original card look */
+      flex-direction: column; /* stack cards vertically */
+      gap: 10px;
     }
-
-
     .order-card:hover {
       transform: scale(1.02);
       box-shadow: 0 6px 14px rgba(0,0,0,0.12);
@@ -930,6 +928,7 @@
             grid-template-columns: 1fr;
         }
     }
+
 
 
 
