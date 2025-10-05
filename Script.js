@@ -216,6 +216,7 @@ document.addEventListener("DOMContentLoaded", () => {
           const label = formatDateLabel(order.timestamp);
           if (!groups[label]) groups[label] = [];
           groups[label].push(orderDiv);
+          ordersList.appendChild(orderDiv);
         
           // ✅ Attach delete listener if button exists
           if (admins.includes(mail)) {
@@ -673,5 +674,6 @@ document.addEventListener("DOMContentLoaded", () => {
       updateCartDisplay();
     });
   }
+
 
 
