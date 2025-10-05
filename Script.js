@@ -119,198 +119,160 @@ document.addEventListener("DOMContentLoaded", () => {
       .catch(error => {
         console.error("Failed to load courier.json:", error);
       });
+
+  function fetchAndRenderOrders(mail, admins, courier) {
+    console.log(mail);
+    console.log(admins);
+    const ordersRef = db.ref('Orders');
+    const ordersList = document.getElementById('orders-list');
+    const scrollPos = ordersList.scrollTop;
+    console.log(scrollPos)
+    ordersList.innerHTML = ''; // clear existing orders
+    const isCourier = courier.includes(mail);
   
-      function formatDateLabel(ts) {
-        let date;
-      
-        if (!isNaN(ts)) {
-          // numeric timestamp (milliseconds)
-          date = new Date(Number(ts));
-        } else if (typeof ts === "string") {
-          if (ts.includes("-")) {
-            // YYYY-MM-DD
-            const [y, m, d] = ts.split("-");
-            date = new Date(y, m - 1, d);
-          } else if (ts.includes("/")) {
-            const parts = ts.split("/");
-            if (parts[0].length === 4) {
-              // YYYY/MM/DD
-              date = new Date(parts[0], parts[1] - 1, parts[2]);
-            } else {
-              // assume DD/MM/YY
-              let dd = parseInt(parts[0], 10);
-              let mm = parseInt(parts[1], 10) - 1;
-              let yy = parseInt(parts[2], 10);
-              yy = yy < 50 ? 2000 + yy : 1900 + yy; 
-              date = new Date(yy, mm, dd);
-            }
-          }
-        }
-      
-        if (!date || isNaN(date.getTime())) return "Unknown";
-      
-        const dd = String(date.getDate()).padStart(2, '0');
-        const mm = String(date.getMonth() + 1).padStart(2, '0');
-        const yy = String(date.getFullYear()).slice(-2);
-      
-        return `${dd}/${mm}/${yy}`;
+    ordersRef.once('value', (snapshot) => {
+      if (!snapshot.exists()) {
+        ordersList.innerHTML = '<p>No orders found.</p>';
+        return;
       }
     
-    
-    function fetchAndRenderOrders(mail, admins, courier) {
-      console.log(mail);
-      console.log(admins);
-      const ordersRef = db.ref('Orders');
-      const ordersList = document.getElementById('orders-list');
-      const scrollPos = ordersList.scrollTop;
-      console.log(scrollPos)
-      ordersList.innerHTML = ''; // clear existing orders
-      const isCourier = courier.includes(mail);
-    
-      ordersRef.once('value', (snapshot) => {
-        if (!snapshot.exists()) {
-          ordersList.innerHTML = '<p>No orders found.</p>';
-          return;
-        }
+      snapshot.forEach((childSnapshot) => {
+        const order = childSnapshot.val();
+        const orderId = childSnapshot.key;
       
-        let lastDate = null; // ✅ track last date
-      
-        snapshot.forEach((childSnapshot) => {
-          const order = childSnapshot.val();
-          const orderId = childSnapshot.key;
+        if (order.mail === mail || admins.includes(mail) || isCourier) {
+          console.log(isCourier)
+          const orderDiv = document.createElement('div');
+          orderDiv.className = 'order-item';
         
-          if (order.mail === mail || admins.includes(mail) || isCourier) {
-            const orderDiv = document.createElement('div');
-            const label = formatDateLabel(order.timestamp);
+          let itemsHTML = '';
+          order.items.forEach((item) => {
+            itemsHTML += `
+              <p>
+                ${item.name} x${item.quantity} — Rp${(item.price * item.quantity).toLocaleString()}
+              </p>`;
+          });
+        
+          let deleteButtonHTML = '';
+          let EmailP = '';
+          if (admins.includes(mail)) {
+            deleteButtonHTML = `
+              <button class="remove-order" id="${orderId}">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" 
+                  stroke-width="1.5" stroke="currentColor" style="width:16px; height:16px;">
+                  <path stroke-linecap="round" stroke-linejoin="round" 
+                    d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 
+                       1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 
+                       1-2.244 2.077H8.084a2.25 2.25 0 0 
+                       1-2.244-2.077L4.772 5.79m14.456 
+                       0a48.108 48.108 0 0 0-3.478-.397m-12 
+                       .562c.34-.059.68-.114 1.022-.165m0 
+                       0a48.11 48.11 0 0 1 3.478-.397m7.5 
+                       0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 
+                       51.964 0 0 0-3.32 0c-1.18.037-2.09 
+                       1.022-2.09 2.201v.916m7.5 0a48.667 
+                       48.667 0 0 0-7.5 0" />
+                </svg>
+              </button>`;
+            EmailP = `<p><strong>Email:</strong> ${order.mail}</p>`;
+          }
+          let courierHTML = '';
+          const taken = order.courier && order.courier !== "";
+          if (isCourier) {
+            const isMine = order.courier === courier;
           
-            // ✅ Insert divider if date changed
-            if (label !== lastDate) {
-              const hr = document.createElement("div");
-              hr.textContent = `-------------------- ${label} --------------------`;
-              hr.style.textAlign = "center";
-              hr.style.margin = "10px 0";
-              ordersList.appendChild(hr);
-            
-              lastDate = label;
-            }
-          
-            orderDiv.className = 'order-item';
-          
-            let itemsHTML = '';
-            order.items.forEach((item) => {
-              itemsHTML += `
-                <p>
-                  ${item.name} x${item.quantity} — Rp${(item.price * item.quantity).toLocaleString()}
-                </p>`;
-            });
-          
-            let deleteButtonHTML = '';
-            let EmailP = '';
-            if (admins.includes(mail)) {
-              deleteButtonHTML = `
-                <button class="remove-order" id="${orderId}">
-                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" 
-                    stroke-width="1.5" stroke="currentColor" style="width:16px; height:16px;">
-                    <path stroke-linecap="round" stroke-linejoin="round" 
-                      d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 
-                         1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 
-                         1-2.244 2.077H8.084a2.25 2.25 0 0 
-                         1-2.244-2.077L4.772 5.79m14.456 
-                         0a48.108 48.108 0 0 0-3.478-.397m-12 
-                         .562c.34-.059.68-.114 1.022-.165m0 
-                         0a48.11 48.11 0 0 1 3.478-.397m7.5 
-                         0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 
-                         51.964 0 0 0-3.32 0c-1.18.037-2.09 
-                         1.022-2.09 2.201v.916m7.5 0a48.667 
-                         48.667 0 0 0-7.5 0" />
-                  </svg>
-                </button>`;
-              EmailP = `<p><strong>Email:</strong> ${order.mail}</p>`;
-            }
-          
-            let courierHTML = '';
-            const taken = order.courier && order.courier !== "";
-            if (isCourier) {
-              const isMine = order.courier === mail;
-            
-              courierHTML = `
-                <label>
-                  <input type="checkbox" class="take-order" data-id="${orderId}" 
-                    ${isMine ? 'checked' : ''} ${taken && !isMine ? 'disabled' : ''}>
-                  ${isMine ? 'You took this order' : taken ? 'Taken by another courier' : 'Take this order'}
-                </label>
-              `;
-            }
-          
-            if (taken && (admins.includes(mail) || isCourier)) {
-              courierHTML += `<p><strong>Courier:</strong> ${order.courier}</p>`;
-            }
-            
-            orderDiv.innerHTML = `
-              <h4>${order.name} (${order.grade}-${order.class})</h4>
-              <p><strong>Payment:</strong> ${order.paymentMethod}</p>
-              <p><strong>Items:</strong>${itemsHTML}</p>
-              <p><strong>Total:</strong> Rp${order.total.toLocaleString()}</p>
-              <p><strong>Timestamp:</strong>${order.timestamp}<p>
-              ${EmailP}
-              ${courierHTML}
-              ${deleteButtonHTML}
+            courierHTML = `
+              <label>
+                <input type="checkbox" class="take-order" data-id="${orderId}" 
+                  ${isMine ? 'checked' : ''} ${taken && !isMine ? 'disabled' : ''}>
+                ${isMine ? 'You took this order' : taken ? 'Taken by another courier' : 'Take this order'}
+              </label>
             `;
+          }
+  
+          if (taken && (admins.includes(mail) || isCourier)) {
+            courierHTML += `<p><strong>Courier:</strong> ${order.courier}</p>`;
+          }
           
-            ordersList.appendChild(orderDiv);
-          
-            // ✅ Attach delete listener
-            if (admins.includes(mail)) {
-              const deleteBtn = orderDiv.querySelector('.remove-order');
-              deleteBtn.addEventListener('click', () => {
-                if (!confirm("Are you sure you want to delete this order?")) return;
+          orderDiv.innerHTML = `
+            <h4>${order.name} (${order.grade}-${order.class})</h4>
+            <p><strong>Payment:</strong> ${order.paymentMethod}</p>
+            <p><strong>Items:</strong>${itemsHTML}</p>
+            <p><strong>Total:</strong> Rp${order.total.toLocaleString()}</p>
+            <p><strong>Timestamp:</strong>${order.timestamp}<p>
+            ${EmailP}
+            ${courierHTML}
+            ${deleteButtonHTML}
+          `;
+        
+          const label = formatDateLabel(order.timestamp);
+          if (!groups[label]) groups[label] = [];
+          groups[label].push(orderDiv);
+        
+          // ✅ Attach delete listener if button exists
+          if (admins.includes(mail)) {
+            const deleteBtn = orderDiv.querySelector('.remove-order');
+            deleteBtn.addEventListener('click', () => {
+              if (!confirm("Are you sure you want to delete this order?")) return;
+            
+              db.ref('Orders/' + orderId).remove()
+                .then(() => {
+                  alert("Order deleted successfully.");
+                  fetchAndRenderOrders(mail, admins, courier); // refresh
+                })
+                .catch((error) => {
+                  console.error("Error deleting order:", error);
+                  alert("Failed to delete order.");
+                });
+            });
+          }
+        
+          // ✅ Attach courier checkbox logic
+          if (isCourier) {
+            const takeOrderCheckbox = orderDiv.querySelector('.take-order');
+            if (takeOrderCheckbox) {
+              takeOrderCheckbox.addEventListener('change', (e) => {
+                const checked = e.target.checked;
+                const id = e.target.dataset.id;
               
-                db.ref('Orders/' + orderId).remove()
-                  .then(() => {
-                    alert("Order deleted successfully.");
-                    fetchAndRenderOrders(mail, admins, courier); // refresh
-                  })
-                  .catch((error) => {
-                    console.error("Error deleting order:", error);
-                    alert("Failed to delete order.");
-                  });
+                if (checked) {
+                  db.ref('Orders/' + id).update({ courier: mail })
+                    .then(() => {
+                      console.log(mail)
+                      alert("You took the order.");
+                      fetchAndRenderOrders(mail, admins, courier);
+                    });
+                } else {
+                  db.ref('Orders/' + id).update({ courier: "" })
+                    .then(() => {
+                      alert("You released the order.");
+                      fetchAndRenderOrders(mail, admins, courier);
+                    });
+                }
               });
             }
-          
-            // ✅ Attach courier checkbox logic
-            if (isCourier) {
-              const takeOrderCheckbox = orderDiv.querySelector('.take-order');
-              if (takeOrderCheckbox) {
-                takeOrderCheckbox.addEventListener('change', (e) => {
-                  const checked = e.target.checked;
-                  const id = e.target.dataset.id;
-                
-                  if (checked) {
-                    db.ref('Orders/' + id).update({ courier: mail })
-                      .then(() => {
-                        alert("You took the order.");
-                        fetchAndRenderOrders(mail, admins, courier);
-                      });
-                  } else {
-                    db.ref('Orders/' + id).update({ courier: "" })
-                      .then(() => {
-                        alert("You released the order.");
-                        fetchAndRenderOrders(mail, admins, courier);
-                      });
-                  }
-                });
-              }
-            }
           }
-        });
-        
-        ordersList.scrollTop = scrollPos;
-        if (admins.includes(mail)){
-          renderAdminItemSummary(snapshot, ordersList);
         }
       });
-    }
+      Object.keys(groups).forEach((label) => {
+        const section = document.createElement('div');
+        section.className = "order-section";
+            
+        const header = document.createElement('h3');
+        header.textContent = label;
+        section.appendChild(header);
+            
+        groups[label].forEach(div => section.appendChild(div));
+        ordersList.appendChild(section);
+      });
+      
 
+      ordersList.scrollTop = scrollPos;
+      if (admins.includes(mail)){
+        renderAdminItemSummary(snapshot, ordersList);
+      }
+    });
+  }
 
     document.getElementById('order-btn').addEventListener('click', function () {
       if (cart.length === 0) {
@@ -703,10 +665,3 @@ document.addEventListener("DOMContentLoaded", () => {
       updateCartDisplay();
     });
   }
-
-
-
-
-
-
-
