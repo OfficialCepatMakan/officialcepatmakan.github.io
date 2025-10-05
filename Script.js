@@ -135,6 +135,8 @@ document.addEventListener("DOMContentLoaded", () => {
         ordersList.innerHTML = '<p>No orders found.</p>';
         return;
       }
+
+      const groups = {}; 
     
       snapshot.forEach((childSnapshot) => {
         const order = childSnapshot.val();
@@ -665,3 +667,4 @@ document.addEventListener("DOMContentLoaded", () => {
       updateCartDisplay();
     });
   }
+
