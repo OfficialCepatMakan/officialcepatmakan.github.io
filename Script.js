@@ -269,20 +269,14 @@ document.addEventListener("DOMContentLoaded", () => {
         }
       });
       Object.keys(groups).forEach((label) => {
-        // separator line + date label
-        const header = document.createElement('div');
-        header.innerHTML = `<hr><h3 style="text-align:center;">${label}</h3>`;
-        ordersList.appendChild(header);
+        // create a date separator instead of a section header
+        const separator = document.createElement('div');
+        separator.className = "date-separator";
+        separator.textContent = label;
+        ordersList.appendChild(separator);
 
-        // container for orders (grid style)
-        const grid = document.createElement('div');
-        grid.className = "orders-grid";
-
-        groups[label].forEach(orderDiv => {
-          grid.appendChild(orderDiv);
-        });
-
-        ordersList.appendChild(grid);
+        // then append each order under it
+        groups[label].forEach(div => ordersList.appendChild(div));
       });
       
       ordersList.scrollTop = scrollPos;
@@ -683,6 +677,7 @@ document.addEventListener("DOMContentLoaded", () => {
       updateCartDisplay();
     });
   }
+
 
 
 
