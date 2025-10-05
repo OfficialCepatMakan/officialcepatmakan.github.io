@@ -205,10 +205,6 @@ document.addEventListener("DOMContentLoaded", () => {
             ${deleteButtonHTML}
           `;
         
-          const label = formatDateLabel(order.timestamp);
-          if (!groups[label]) groups[label] = [];
-          groups[label].push(orderDiv);
-        
           // ✅ Attach delete listener if button exists
           if (admins.includes(mail)) {
             const deleteBtn = orderDiv.querySelector('.remove-order');
@@ -652,3 +648,4 @@ document.addEventListener("DOMContentLoaded", () => {
       updateCartDisplay();
     });
   }
+
