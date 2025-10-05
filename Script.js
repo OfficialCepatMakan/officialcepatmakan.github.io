@@ -120,12 +120,34 @@ document.addEventListener("DOMContentLoaded", () => {
         console.error("Failed to load courier.json:", error);
       });
   function formatDateLabel(timestamp) {
-    const date = new Date(timestamp);
+    let date;
+
+    if (!timestamp) return "Unknown";
+
+    // Case 1: already a number (Firebase usually stores ms timestamps)
+    if (!isNaN(timestamp)) {
+      date = new Date(Number(timestamp));
+    }
+    // Case 2: format YYYY-MM-DD
+    else if (/^\d{4}-\d{2}-\d{2}$/.test(timestamp)) {
+      date = new Date(timestamp + "T00:00:00");
+    }
+    // Case 3: format DD/MM/YY
+      else if (/^\d{2}\/\d{2}\/\d{2}$/.test(timestamp)) {
+      const [dd, mm, yy] = timestamp.split("/");
+      date = new Date(`20${yy}-${mm}-${dd}T00:00:00`);
+    }
+    // Fallback
+    else {
+      return "Unknown";
+    }
+
     const dd = String(date.getDate()).padStart(2, '0');
-    const mm = String(date.getMonth() + 1).padStart(2, '0'); // month is 0-based
+    const mm = String(date.getMonth() + 1).padStart(2, '0');
     const yy = String(date.getFullYear()).slice(-2);
     return `${dd}${mm}${yy}`;
   }
+
 
 
   function fetchAndRenderOrders(mail, admins, courier) {
@@ -674,6 +696,7 @@ document.addEventListener("DOMContentLoaded", () => {
       updateCartDisplay();
     });
   }
+
 
 
 
