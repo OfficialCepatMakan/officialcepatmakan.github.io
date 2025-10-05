@@ -94,7 +94,7 @@
       grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
       gap: 1rem;
       padding: 1rem;
-      max-height: 90vh; /* or whatever fits your layout */
+      max-height: 95vh; /* or whatever fits your layout */
       overflow-y: auto;
     }
     .orange-text {
@@ -137,15 +137,16 @@
     }
 
     .date-divider {
-      width: 100%;              /* stretch across */
-      text-align: center;       /* center the date text */
+      grid-column: 1 / -1;   /* <-- makes it stretch across the full row */
+      text-align: center;
       font-weight: bold;
       font-size: 1.2rem;
-      margin: 20px 0 10px 0;    /* spacing above/below */
-      border-bottom: 2px solid #ccc; /* optional underline */
+      margin: 20px 0 10px 0;
+      border-bottom: 2px solid #ccc;
       padding: 5px 0;
-      background: #f9f9f9;      /* subtle bg so it looks like a header */
+      background: #f9f9f9;
     }
+
     .orders-container {
       display: flex;
       flex-direction: column; /* stack cards vertically */
@@ -203,14 +204,7 @@
       padding: 20px;
       transform: translateY(-70px);
     }
-    .date-separator {
-      display: flex;
-      align-items: center;
-      text-align: center;
-      margin: 2rem 0 1rem;
-      font-weight: bold;
-      color: var(--muted-text);
-    }
+
     .hero-content h1 {
       font-size: 3.5rem;
       margin-bottom: 10px;
@@ -929,6 +923,7 @@
             grid-template-columns: 1fr;
         }
     }
+
 
 
 
