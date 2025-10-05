@@ -287,18 +287,25 @@ document.addEventListener("DOMContentLoaded", () => {
       const ordersList = document.getElementById('orders-list');
       ordersList.innerHTML = '';
 
-      Object.keys(groups).forEach(dateKey => {
-        const separator = document.createElement('div');
-        separator.className = "date-separator";
-        separator.textContent = dateKey;
-        ordersList.appendChild(separator);
+      Object.keys(groups).forEach((label) => {
+        const section = document.createElement('div');
+        section.className = "order-section";
 
-        groups[dateKey].forEach(orderDiv => {
-          ordersList.appendChild(orderDiv);
-        });
+        // ✅ Date header at the top
+        const header = document.createElement('div');
+        header.className = "date-separator";
+        header.textContent = label;
+        section.appendChild(header);
+
+        // ✅ Container for that day's orders
+        const ordersContainer = document.createElement('div');
+        ordersContainer.className = "orders-container";
+
+        groups[label].forEach(div => ordersContainer.appendChild(div));
+        section.appendChild(ordersContainer);
+
+        ordersList.appendChild(section);
       });
-      
-
       ordersList.scrollTop = scrollPos;
       if (admins.includes(mail)){
         renderAdminItemSummary(snapshot, ordersList);
@@ -697,6 +704,7 @@ document.addEventListener("DOMContentLoaded", () => {
       updateCartDisplay();
     });
   }
+
 
 
 
