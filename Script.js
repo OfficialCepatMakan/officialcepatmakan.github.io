@@ -128,10 +128,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (date.toDateString() === today.toDateString()) return "Today";
     if (date.toDateString() === yesterday.toDateString()) return "Yesterday";
-    return date.toLocaleDateString("id-ID", { day: "numeric", month: "long", year: "numeric" });
+
+    // MM/DD/YY formatting
+    const mm = String(date.getMonth() + 1).padStart(2, '0');
+    const dd = String(date.getDate()).padStart(2, '0');
+    const yy = String(date.getFullYear()).slice(-2);
+    return `${mm}/${dd}/${yy}`;
   }
 
-  
   function fetchAndRenderOrders(mail, admins, courier) {
     console.log(mail);
     console.log(admins);
@@ -677,6 +681,7 @@ document.addEventListener("DOMContentLoaded", () => {
       updateCartDisplay();
     });
   }
+
 
 
 
