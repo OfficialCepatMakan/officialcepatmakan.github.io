@@ -119,6 +119,14 @@ document.addEventListener("DOMContentLoaded", () => {
       .catch(error => {
         console.error("Failed to load courier.json:", error);
       });
+  function formatDateLabel(timestamp) {
+    const date = new Date(timestamp);
+    const dd = String(date.getDate()).padStart(2, '0');
+    const mm = String(date.getMonth() + 1).padStart(2, '0'); // month is 0-based
+    const yy = String(date.getFullYear()).slice(-2);
+    return `${dd}${mm}${yy}`;
+  }
+
 
   function fetchAndRenderOrders(mail, admins, courier) {
     console.log(mail);
@@ -665,4 +673,5 @@ document.addEventListener("DOMContentLoaded", () => {
       updateCartDisplay();
     });
   }
+
 
