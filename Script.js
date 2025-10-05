@@ -238,7 +238,6 @@ document.addEventListener("DOMContentLoaded", () => {
           const label = formatDateLabel(order.timestamp);
           if (!groups[label]) groups[label] = [];
           groups[label].push(orderDiv);
-          ordersList.appendChild(orderDiv);
         
           // ✅ Attach delete listener if button exists
           if (admins.includes(mail)) {
@@ -285,16 +284,18 @@ document.addEventListener("DOMContentLoaded", () => {
           }
         }
       });
-      Object.keys(groups).forEach((label) => {
-        const section = document.createElement('div');
-        section.className = "order-section";
-            
-        const header = document.createElement('h3');
-        header.textContent = label;
-        section.appendChild(header);
-            
-        groups[label].forEach(div => section.appendChild(div));
-        ordersList.appendChild(section);
+      const ordersList = document.getElementById('orders-list');
+      ordersList.innerHTML = '';
+
+      Object.keys(groups).forEach(dateKey => {
+        const separator = document.createElement('div');
+        separator.className = "date-separator";
+        separator.textContent = dateKey;
+        ordersList.appendChild(separator);
+
+        groups[dateKey].forEach(orderDiv => {
+          ordersList.appendChild(orderDiv);
+        });
       });
       
 
@@ -696,6 +697,7 @@ document.addEventListener("DOMContentLoaded", () => {
       updateCartDisplay();
     });
   }
+
 
 
 
