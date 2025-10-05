@@ -254,19 +254,6 @@ document.addEventListener("DOMContentLoaded", () => {
           }
         }
       });
-      Object.keys(groups).forEach((label) => {
-        const section = document.createElement('div');
-        section.className = "order-section";
-            
-        const header = document.createElement('h3');
-        header.textContent = label;
-        section.appendChild(header);
-            
-        groups[label].forEach(div => section.appendChild(div));
-        ordersList.appendChild(section);
-      });
-      
-
       ordersList.scrollTop = scrollPos;
       if (admins.includes(mail)){
         renderAdminItemSummary(snapshot, ordersList);
