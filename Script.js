@@ -269,18 +269,22 @@ document.addEventListener("DOMContentLoaded", () => {
         }
       });
       Object.keys(groups).forEach((label) => {
-        const section = document.createElement('div');
-        section.className = "order-section";
-            
-        const header = document.createElement('h3');
-        header.textContent = label;
-        section.appendChild(header);
-            
-        groups[label].forEach(div => section.appendChild(div));
-        ordersList.appendChild(section);
+        // separator line + date label
+        const header = document.createElement('div');
+        header.innerHTML = `<hr><h3 style="text-align:center;">${label}</h3>`;
+        ordersList.appendChild(header);
+
+        // container for orders (grid style)
+        const grid = document.createElement('div');
+        grid.className = "orders-grid";
+
+        groups[label].forEach(orderDiv => {
+          grid.appendChild(orderDiv);
+        });
+
+        ordersList.appendChild(grid);
       });
       
-
       ordersList.scrollTop = scrollPos;
       if (admins.includes(mail)){
         renderAdminItemSummary(snapshot, ordersList);
@@ -679,5 +683,6 @@ document.addEventListener("DOMContentLoaded", () => {
       updateCartDisplay();
     });
   }
+
 
 
