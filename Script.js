@@ -119,7 +119,19 @@ document.addEventListener("DOMContentLoaded", () => {
       .catch(error => {
         console.error("Failed to load courier.json:", error);
       });
+  
+  function formatDateLabel(ts) {
+    const date = new Date(ts);
+    const today = new Date();
+    const yesterday = new Date();
+    yesterday.setDate(today.getDate() - 1);
 
+    if (date.toDateString() === today.toDateString()) return "Today";
+    if (date.toDateString() === yesterday.toDateString()) return "Yesterday";
+    return date.toLocaleDateString("id-ID", { day: "numeric", month: "long", year: "numeric" });
+  }
+
+  
   function fetchAndRenderOrders(mail, admins, courier) {
     console.log(mail);
     console.log(admins);
@@ -667,4 +679,5 @@ document.addEventListener("DOMContentLoaded", () => {
       updateCartDisplay();
     });
   }
+
 
