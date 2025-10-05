@@ -121,20 +121,41 @@ document.addEventListener("DOMContentLoaded", () => {
       });
   
   function formatDateLabel(ts) {
-    const date = new Date(ts);
-    const today = new Date();
-    const yesterday = new Date();
-    yesterday.setDate(today.getDate() - 1);
+    let date;
 
-    if (date.toDateString() === today.toDateString()) return "Today";
-    if (date.toDateString() === yesterday.toDateString()) return "Yesterday";
+    if (!isNaN(ts)) {
+      // numeric timestamp (milliseconds)
+      date = new Date(Number(ts));
+    } else if (typeof ts === "string") {
+      if (ts.includes("-")) {
+        // YYYY-MM-DD
+        const [y, m, d] = ts.split("-");
+        date = new Date(y, m - 1, d);
+      } else if (ts.includes("/")) {
+        const parts = ts.split("/");
+        if (parts[0].length === 4) {
+          // YYYY/MM/DD
+          date = new Date(parts[0], parts[1] - 1, parts[2]);
+        } else {
+          // assume DD/MM/YY
+          let dd = parseInt(parts[0], 10);
+          let mm = parseInt(parts[1], 10) - 1;
+          let yy = parseInt(parts[2], 10);
+          yy = yy < 50 ? 2000 + yy : 1900 + yy; 
+          date = new Date(yy, mm, dd);
+        }
+      }
+    }
 
-    // MM/DD/YY formatting
-    const mm = String(date.getMonth() + 1).padStart(2, '0');
+    if (!date || isNaN(date.getTime())) return "Unknown";
+
     const dd = String(date.getDate()).padStart(2, '0');
+    const mm = String(date.getMonth() + 1).padStart(2, '0');
     const yy = String(date.getFullYear()).slice(-2);
-    return `${mm}/${dd}/${yy}`;
+
+    return `${dd}/${mm}/${yy}`;
   }
+
 
   function fetchAndRenderOrders(mail, admins, courier) {
     console.log(mail);
@@ -681,6 +702,7 @@ document.addEventListener("DOMContentLoaded", () => {
       updateCartDisplay();
     });
   }
+
 
 
 
