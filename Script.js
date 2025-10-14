@@ -420,7 +420,7 @@ document.addEventListener("DOMContentLoaded", () => {
           setInterval(() => {
             const user = firebase.auth().currentUser;
             fetchAndRenderOrders(user.email, adminEmails, courierEmails);
-          }, 5000);
+          }, 10000);
           
         } else {
           console.error("No user signed in");
@@ -744,4 +744,5 @@ document.addEventListener("DOMContentLoaded", () => {
       updateCartDisplay();
     });
   }
+
 
