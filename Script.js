@@ -4,9 +4,11 @@ const menuBtn = document.getElementById("menu-button");
 const sidePanel = document.getElementById("side-panel");
 const menuSection = document.getElementById("menu-section");
 const cartSection = document.getElementById("cart-section");
+const settingsSection = document.getElementById("settings-section")
 const menuBtn2 = document.getElementById("btn-menu");
 const orderBtn = document.getElementById("btn-order")
 const cartBtn = document.getElementById("btn-cart");
+const settingsBtn = document.getElementById("btn-settings")
 const orderSection = document.getElementById("orders-section")
 const floatBtn = document.getElementById("dark-toggle")
 const gradeSelect = document.getElementById("grade");
@@ -31,7 +33,8 @@ gradeSelect.addEventListener("change", function () {
 const sections = {
   home: [document.getElementById("home-section")],
   cart: [document.getElementById("cart-section")],
-  orders: [document.getElementById("orders-section")]
+  orders: [document.getElementById("orders-section")],
+  settings: [document.getElementById("settings-section")]
 };
 
 menuBtn.addEventListener("click", () => {
@@ -389,11 +392,11 @@ document.addEventListener("DOMContentLoaded", () => {
         root.classList.add("dark");
         darkIcon.innerHTML = sunSVG;
     } else {
-        darkIcon.innerHTML = moonSVG;
+        darkIcon.innerHTML = sunSVG;
+        root.classList.toggle("dark");
     }
 
     darkToggle.addEventListener("click", () => {
-        root.classList.toggle("dark");
         const isDark = root.classList.contains("dark");
 
         darkIcon.innerHTML = isDark ? sunSVG : moonSVG;
@@ -405,11 +408,13 @@ document.addEventListener("DOMContentLoaded", () => {
         menuSection.style.display = "grid";
         cartSection.style.display = "none";
         orderSection.style.display = "none";
+        settingsSection.style.display ="none";
       });
       cartBtn.addEventListener("click", () => {
         menuSection.style.display = "none";
         cartSection.style.display = "block";
         orderSection.style.display = "none";
+        settingsSection.style.display ="none";
       });
       orderBtn.addEventListener("click", () => {
         orderSection.style.display = "block";
@@ -420,7 +425,7 @@ document.addEventListener("DOMContentLoaded", () => {
           setInterval(() => {
             const user = firebase.auth().currentUser;
             fetchAndRenderOrders(user.email, adminEmails, courierEmails);
-          }, 10000);
+          }, 5000);
           
         } else {
           console.error("No user signed in");
@@ -428,7 +433,15 @@ document.addEventListener("DOMContentLoaded", () => {
 
         menuSection.style.display = "none";
         cartSection.style.display = "none";
+        settingsSection.style.display ="none";
       });
+      settingsBtn.addEventListener("click", () => {
+        settingsSection.style.display = "block";
+        orderSection.style.display = "none";
+        menuSection.style.display = "none";
+        cartSection.style.display = "none";
+        console.log("opening settings")
+      })
 
     auth.onAuthStateChanged((user) => {
       if (user) {
@@ -480,12 +493,6 @@ document.addEventListener("DOMContentLoaded", () => {
   function loadMenu(filter) {
     const mainCourseRef = db.ref('menu/main_course');
 
-    function changeQty(i, delta) {
-      cart[i].qty += delta;
-      if (cart[i].qty < 1) cart.splice(i, 1);
-      renderCart();
-    }
-
     mainCourseRef.once('value', (snapshot) => {
       const items = snapshot.val();
       const menuGrid = document.querySelector('.menu-grid');
@@ -508,13 +515,13 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-
   function createMenuItem(key, item) {
     const menuItem = document.createElement('div');
     menuItem.className = 'menu-item';
 
     menuItem.innerHTML = `
       <div class="item-image"><img src="${item.image}"></img></div>
+      <div class="websss"><img src="Webs.png" style="width: 150px; height: auto;"></img></div>
       <div class="item-content">
         <div class="item-header">
           <h4 class="item-name">${item.name}</h4>
@@ -745,4 +752,76 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
+  function spawnBats(numBats) {
+    const container = document.getElementById("bat-container");
 
+    // Clear old bats
+    container.innerHTML = "";
+
+    for (let i = 0; i < numBats; i++) {
+      const bat = document.createElement("img");
+      bat.src = "bat.png";
+      bat.className = "bat";
+
+      // randomize positions and flight path
+      const startY = Math.random() * window.innerHeight * 0.8 + "px";
+      const endY = Math.random() * window.innerHeight * 0.8 + "px";
+      const startX = "-150px";
+      const endX = "110vw";
+      const midX = Math.random() * window.innerWidth * 0.5 + "px";
+      const midY = Math.random() * window.innerHeight * 0.5 + "px";
+      const scale = 0.5 + Math.random() * 1.5;
+
+      // randomize direction (flip)
+      const flip = Math.random() < 0.5;
+
+      bat.style.setProperty("--start-x", startX);
+      bat.style.setProperty("--start-y", startY);
+      bat.style.setProperty("--end-x", endX);
+      bat.style.setProperty("--end-y", endY);
+      bat.style.setProperty("--mid-x", midX);
+      bat.style.setProperty("--mid-y", midY);
+      bat.style.setProperty("--scale", scale);
+
+      if (flip) bat.style.transform = "scaleX(-1)";
+
+      const duration = 2 + Math.random() * 2; // 2–4 seconds
+      const delay = Math.random() * 0.8; // 0–0.8s delay
+
+      bat.style.animation = `batFly ${duration}s ease-in-out ${delay}s forwards`;
+      container.appendChild(bat);
+    }
+  }
+
+  window.addEventListener("load", () => spawnBats(100));
+
+  const ghostContainer = document.getElementById('ghost-container');
+  const ghostImg = "ghost.png"; // use your ghost image here
+
+  function spawnGhost() {
+    const ghost = document.createElement("img");
+    ghost.src = "ghost.png";
+    ghost.classList.add("ghost");
+
+    // random start and end positions
+    const startX = Math.random() * window.innerWidth + "px";
+    const startY = Math.random() * window.innerHeight + "px";
+    const endX = Math.random() * window.innerWidth + "px";
+    const endY = Math.random() * window.innerHeight + "px";
+
+    // determine direction
+    const dir = parseFloat(startX) - parseFloat(endX) > 0 ? 1 : -1;
+
+    // apply variables
+    ghost.style.setProperty("--start-x", startX);
+    ghost.style.setProperty("--start-y", startY);
+    ghost.style.setProperty("--end-x", endX);
+    ghost.style.setProperty("--end-y", endY);
+    ghost.style.setProperty("--dir", dir);
+
+    ghost.style.animation = `floatGhost ${5 + Math.random() * 5}s linear forwards`;
+    document.getElementById("ghost-container").appendChild(ghost);
+  }
+
+  // spawn a new ghost every 2 seconds
+  setInterval(spawnGhost, Math.floor(Math.random() * (10000 - 5000 + 1)) + 5000);
