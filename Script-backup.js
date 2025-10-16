@@ -4,11 +4,9 @@ const menuBtn = document.getElementById("menu-button");
 const sidePanel = document.getElementById("side-panel");
 const menuSection = document.getElementById("menu-section");
 const cartSection = document.getElementById("cart-section");
-const settingsSection = document.getElementById("settings-section")
 const menuBtn2 = document.getElementById("btn-menu");
 const orderBtn = document.getElementById("btn-order")
 const cartBtn = document.getElementById("btn-cart");
-const settingsBtn = document.getElementById("btn-settings")
 const orderSection = document.getElementById("orders-section")
 const floatBtn = document.getElementById("dark-toggle")
 const gradeSelect = document.getElementById("grade");
@@ -33,8 +31,7 @@ gradeSelect.addEventListener("change", function () {
 const sections = {
   home: [document.getElementById("home-section")],
   cart: [document.getElementById("cart-section")],
-  orders: [document.getElementById("orders-section")],
-  settings: [document.getElementById("settings-section")]
+  orders: [document.getElementById("orders-section")]
 };
 
 menuBtn.addEventListener("click", () => {
@@ -122,239 +119,199 @@ document.addEventListener("DOMContentLoaded", () => {
       .catch(error => {
         console.error("Failed to load courier.json:", error);
       });
+  function formatDateLabel(timestamp) {
+    let date;
 
-      // Helper: parse many timestamp formats into a Date (or null)
-      function parseTimestampToDate(ts) {
-        if (ts == null) return null;
-      
-        // numeric (ms)
-        if (typeof ts === 'number' || /^\d+$/.test(String(ts))) {
-          const n = Number(ts);
-          const d = new Date(n);
-          if (!isNaN(d.getTime())) return d;
-        }
-      
-        if (typeof ts === 'string') {
-          const s = ts.trim();
-        
-          // YYYY-MM-DD or YYYY-MM-DDTHH:MM...
-          if (/^\d{4}-\d{2}-\d{2}/.test(s)) {
-            const d = new Date(s.length === 10 ? s + 'T00:00:00' : s);
-            if (!isNaN(d.getTime())) return d;
-          }
-        
-          // DD/MM/YY or DD/MM/YYYY
-          if (/^\d{2}\/\d{2}\/\d{2,4}$/.test(s)) {
-            const parts = s.split('/');
-            const dd = parseInt(parts[0], 10);
-            const mm = parseInt(parts[1], 10) - 1;
-            let yy = parts[2];
-            if (yy.length === 2) {
-              yy = Number(yy) < 50 ? 2000 + Number(yy) : 1900 + Number(yy);
-            } else {
-              yy = Number(yy);
-            }
-            const d = new Date(yy, mm, dd);
-            if (!isNaN(d.getTime())) return d;
-          }
-        
-          // try Date fallback parse
-          const d = new Date(s);
-          if (!isNaN(d.getTime())) return d;
-        }
-      
-        return null;
+    if (!timestamp) return "Unknown";
+
+    // Case 1: already a number (Firebase usually stores ms timestamps)
+    if (!isNaN(timestamp)) {
+      date = new Date(Number(timestamp));
+    }
+    // Case 2: format YYYY-MM-DD
+    else if (/^\d{4}-\d{2}-\d{2}$/.test(timestamp)) {
+      date = new Date(timestamp + "T00:00:00");
+    }
+    // Case 3: format DD/MM/YY
+      else if (/^\d{2}\/\d{2}\/\d{2}$/.test(timestamp)) {
+      const [dd, mm, yy] = timestamp.split("/");
+      date = new Date(`20${yy}-${mm}-${dd}T00:00:00`);
+    }
+    // Fallback
+    else {
+      return "Unknown";
+    }
+
+    const dd = String(date.getDate()).padStart(2, '0');
+    const mm = String(date.getMonth() + 1).padStart(2, '0');
+    const yy = String(date.getFullYear()).slice(-2);
+    return `${dd}${mm}${yy}`;
+  }
+
+
+
+  function fetchAndRenderOrders(mail, admins, courier) {
+    console.log(mail);
+    console.log(admins);
+    const ordersRef = db.ref('Orders');
+    const ordersList = document.getElementById('orders-list');
+    const scrollPos = ordersList.scrollTop;
+    console.log(scrollPos)
+    ordersList.innerHTML = ''; // clear existing orders
+    const isCourier = courier.includes(mail);
+  
+    ordersRef.once('value', (snapshot) => {
+      if (!snapshot.exists()) {
+        ordersList.innerHTML = '<p>No orders found.</p>';
+        return;
       }
+      const groups = {};
+      snapshot.forEach((childSnapshot) => {
+        const order = childSnapshot.val();
+        const orderId = childSnapshot.key;
       
-      // Helper: returns ddmmyy string (e.g. "240925"), or "Unknown"
-      function formatDateLabel(timestamp) {
-        const d = parseTimestampToDate(timestamp);
-        if (!d) return 'Unknown';
-        const dd = String(d.getDate()).padStart(2, '0');
-        const mm = String(d.getMonth() + 1).padStart(2, '0');
-        const yy = String(d.getFullYear()).slice(-2);
-        return `${dd}/${mm}/${yy}`;
-      }
-      
-      function fetchAndRenderOrders(mail, admins, courier) {
-        console.log(mail);
-        console.log(admins);
-        const ordersRef = db.ref('Orders');
-        const ordersList = document.getElementById('orders-list');
-        if (!ordersList) {
-          console.error("No #orders-list element found in DOM");
-          return;
-        }
-        const scrollPos = ordersList.scrollTop;
-        ordersList.innerHTML = ''; // clear existing orders
-        const isCourier = Array.isArray(courier) ? courier.includes(mail) : (courier === mail);
-      
-        ordersRef.once('value', (snapshot) => {
-          if (!snapshot.exists()) {
-            ordersList.innerHTML = '<p>No orders found.</p>';
-            return;
-          }
+        if (order.mail === mail || admins.includes(mail) || isCourier) {
+          console.log(isCourier)
+          const orderDiv = document.createElement('div');
+          orderDiv.className = 'order-item';
         
-          // Group orders by dateKey (ddmmyy)
-          const grouped = {};          // dateKey -> array of order objects
-          const dateMap = {};          // dateKey -> Date object (for sorting)
-        
-          snapshot.forEach((childSnapshot) => {
-            const order = childSnapshot.val();
-            const orderId = childSnapshot.key;
-          
-            // only include orders the user should see
-            if (!(order && (order.mail === mail || admins.includes(mail) || isCourier))) {
-              return;
-            }
-          
-            const dObj = parseTimestampToDate(order.timestamp);
-            const dateKey = formatDateLabel(order.timestamp);
-            if (!grouped[dateKey]) grouped[dateKey] = [];
-            grouped[dateKey].push({ order, orderId, dateObj: dObj });
-            dateMap[dateKey] = dObj || new Date(0); // fallback for sorting
+          let itemsHTML = '';
+          order.items.forEach((item) => {
+            itemsHTML += `
+              <p>
+                ${item.name} x${item.quantity} — Rp${(item.price * item.quantity).toLocaleString()}
+              </p>`;
           });
         
-          // sort date keys newest -> oldest (change to ascending by flipping)
-          const dateKeys = Object.keys(grouped).sort((a, b) => {
-            return (dateMap[b] ? dateMap[b].getTime() : 0) - (dateMap[a] ? dateMap[a].getTime() : 0);
-          });
-        
-          // Render grouped orders: date header (centered) then that date's cards stacked vertically
-          dateKeys.forEach((dateKey) => {
-            // date header (layer)
-            const dateHeader = document.createElement('div');
-            dateHeader.className = 'date-divider';
-            dateHeader.textContent = dateKey;
-            ordersList.appendChild(dateHeader);
-          
-            // render orders for this date
-            grouped[dateKey].forEach(({ order, orderId }) => {
-              // Build items HTML
-              let itemsHTML = '';
-              if (Array.isArray(order.items)) {
-                order.items.forEach((item) => {
-                  itemsHTML += `<p>${item.name} x${item.quantity} — Rp${(item.price * item.quantity).toLocaleString()}</p>`;
-                });
-              }
-            
-              // build courier / admin pieces
-              let deleteButtonHTML = '';
-              let EmailP = '';
-              if (admins.includes(mail)) {
-                deleteButtonHTML = `
-                  <button class="remove-order" data-id="${orderId}">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                         stroke-width="1.5" stroke="currentColor" style="width:16px; height:16px;">
-                      <path stroke-linecap="round" stroke-linejoin="round"
-                        d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 
-                           1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 
-                           1-2.244 2.077H8.084a2.25 2.25 0 0 
-                           1-2.244-2.077L4.772 5.79m14.456 
-                           0a48.108 48.108 0 0 0-3.478-.397m-12 
-                           .562c.34-.059.68-.114 1.022-.165m0 
-                           0a48.11 48.11 0 0 1 3.478-.397m7.5 
-                           0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 
-                           51.964 0 0 0-3.32 0c-1.18.037-2.09 
-                           1.022-2.09 2.201v.916m7.5 0a48.667 
-                           48.667 0 0 0-7.5 0" />
-                    </svg>
-                  </button>`;
-                EmailP = `<p><strong>Email:</strong> ${order.mail}</p>`;
-              }
-            
-              const taken = order.courier && order.courier !== "";
-              // isMine uses mail, not the courier array
-              const isMine = order.courier === mail;
-            
-              let courierHTML = '';
-              if (isCourier) {
-                courierHTML = `
-                  <label>
-                    <input type="checkbox" class="take-order" data-id="${orderId}"
-                      ${isMine ? 'checked' : ''} ${taken && !isMine ? 'disabled' : ''}>
-                    ${isMine ? 'You took this order' : taken ? 'Taken by another courier' : 'Take this order'}
-                  </label>
-                `;
-              }
-              if (taken && (admins.includes(mail) || isCourier)) {
-                courierHTML += `<p><strong>Courier:</strong> ${order.courier}</p>`;
-              }
-            
-              const orderDiv = document.createElement('div');
-              orderDiv.className = 'order-item';
-              // keep your original card structure and style
-              orderDiv.innerHTML = `
-                <h4>${order.name} (${order.grade}-${order.class})</h4>
-                <p><strong>Payment:</strong> ${order.paymentMethod}</p>
-                <div class="order-items">${itemsHTML}</div>
-                <p><strong>Total:</strong> Rp${(order.total || 0).toLocaleString()}</p>
-                <p><strong>Timestamp:</strong> ${order.timestamp}</p>
-                ${EmailP}
-                ${courierHTML}
-                ${deleteButtonHTML}
-              `;
-            
-              // append card to DOM
-              ordersList.appendChild(orderDiv);
-            
-              // attach delete listener (if admin)
-              if (admins.includes(mail)) {
-                const deleteBtn = orderDiv.querySelector('.remove-order');
-                if (deleteBtn) {
-                  deleteBtn.addEventListener('click', () => {
-                    if (!confirm("Are you sure you want to delete this order?")) return;
-                    db.ref('Orders/' + orderId).remove()
-                      .then(() => {
-                        alert("Order deleted successfully.");
-                        fetchAndRenderOrders(mail, admins, courier); // refresh
-                      })
-                      .catch((error) => {
-                        console.error("Error deleting order:", error);
-                        alert("Failed to delete order.");
-                      });
-                  });
-                }
-              }
-            
-              // attach courier checkbox listener
-              if (isCourier) {
-                const takeOrderCheckbox = orderDiv.querySelector('.take-order');
-                if (takeOrderCheckbox) {
-                  takeOrderCheckbox.addEventListener('change', (e) => {
-                    const checked = e.target.checked;
-                    const id = e.target.dataset.id;
-                    if (checked) {
-                      db.ref('Orders/' + id).update({ courier: mail })
-                        .then(() => {
-                          alert("You took the order.");
-                          fetchAndRenderOrders(mail, admins, courier);
-                        })
-                        .catch(err => console.error(err));
-                    } else {
-                      db.ref('Orders/' + id).update({ courier: "" })
-                        .then(() => {
-                          alert("You released the order.");
-                          fetchAndRenderOrders(mail, admins, courier);
-                        })
-                        .catch(err => console.error(err));
-                    }
-                  });
-                }
-              }
-            }); // end each order in group
-          }); // end each dateKey
-        
-          // restore scroll
-          ordersList.scrollTop = scrollPos;
-        
-          // admin summary
+          let deleteButtonHTML = '';
+          let EmailP = '';
           if (admins.includes(mail)) {
-            renderAdminItemSummary(snapshot, ordersList);
+            deleteButtonHTML = `
+              <button class="remove-order" id="${orderId}">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" 
+                  stroke-width="1.5" stroke="currentColor" style="width:16px; height:16px;">
+                  <path stroke-linecap="round" stroke-linejoin="round" 
+                    d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 
+                       1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 
+                       1-2.244 2.077H8.084a2.25 2.25 0 0 
+                       1-2.244-2.077L4.772 5.79m14.456 
+                       0a48.108 48.108 0 0 0-3.478-.397m-12 
+                       .562c.34-.059.68-.114 1.022-.165m0 
+                       0a48.11 48.11 0 0 1 3.478-.397m7.5 
+                       0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 
+                       51.964 0 0 0-3.32 0c-1.18.037-2.09 
+                       1.022-2.09 2.201v.916m7.5 0a48.667 
+                       48.667 0 0 0-7.5 0" />
+                </svg>
+              </button>`;
+            EmailP = `<p><strong>Email:</strong> ${order.mail}</p>`;
           }
-        });
+          let courierHTML = '';
+          const taken = order.courier && order.courier !== "";
+          if (isCourier) {
+            const isMine = order.courier === courier;
+          
+            courierHTML = `
+              <label>
+                <input type="checkbox" class="take-order" data-id="${orderId}" 
+                  ${isMine ? 'checked' : ''} ${taken && !isMine ? 'disabled' : ''}>
+                ${isMine ? 'You took this order' : taken ? 'Taken by another courier' : 'Take this order'}
+              </label>
+            `;
+          }
+  
+          if (taken && (admins.includes(mail) || isCourier)) {
+            courierHTML += `<p><strong>Courier:</strong> ${order.courier}</p>`;
+          }
+          
+          orderDiv.innerHTML = `
+            <h4>${order.name} (${order.grade}-${order.class})</h4>
+            <p><strong>Payment:</strong> ${order.paymentMethod}</p>
+            <p><strong>Items:</strong>${itemsHTML}</p>
+            <p><strong>Total:</strong> Rp${order.total.toLocaleString()}</p>
+            <p><strong>Timestamp:</strong>${order.timestamp}<p>
+            ${EmailP}
+            ${courierHTML}
+            ${deleteButtonHTML}
+          `;
+        
+          const label = formatDateLabel(order.timestamp);
+          if (!groups[label]) groups[label] = [];
+          groups[label].push(orderDiv);
+        
+          // ✅ Attach delete listener if button exists
+          if (admins.includes(mail)) {
+            const deleteBtn = orderDiv.querySelector('.remove-order');
+            deleteBtn.addEventListener('click', () => {
+              if (!confirm("Are you sure you want to delete this order?")) return;
+            
+              db.ref('Orders/' + orderId).remove()
+                .then(() => {
+                  alert("Order deleted successfully.");
+                  fetchAndRenderOrders(mail, admins, courier); // refresh
+                })
+                .catch((error) => {
+                  console.error("Error deleting order:", error);
+                  alert("Failed to delete order.");
+                });
+            });
+          }
+        
+          // ✅ Attach courier checkbox logic
+          if (isCourier) {
+            const takeOrderCheckbox = orderDiv.querySelector('.take-order');
+            if (takeOrderCheckbox) {
+              takeOrderCheckbox.addEventListener('change', (e) => {
+                const checked = e.target.checked;
+                const id = e.target.dataset.id;
+              
+                if (checked) {
+                  db.ref('Orders/' + id).update({ courier: mail })
+                    .then(() => {
+                      console.log(mail)
+                      alert("You took the order.");
+                      fetchAndRenderOrders(mail, admins, courier);
+                    });
+                } else {
+                  db.ref('Orders/' + id).update({ courier: "" })
+                    .then(() => {
+                      alert("You released the order.");
+                      fetchAndRenderOrders(mail, admins, courier);
+                    });
+                }
+              });
+            }
+          }
+        }
+      });
+      const ordersList = document.getElementById('orders-list');
+      ordersList.innerHTML = '';
+
+      Object.keys(groups).forEach((label) => {
+        const section = document.createElement('div');
+        section.className = "order-section";
+
+        // ✅ Date header at the top
+        const header = document.createElement('div');
+        header.className = "date-separator";
+        header.textContent = label;
+        section.appendChild(header);
+
+        // ✅ Container for that day's orders
+        const ordersContainer = document.createElement('div');
+        ordersContainer.className = "orders-container";
+
+        groups[label].forEach(div => ordersContainer.appendChild(div));
+        section.appendChild(ordersContainer);
+
+        ordersList.appendChild(section);
+      });
+      ordersList.scrollTop = scrollPos;
+      if (admins.includes(mail)){
+        renderAdminItemSummary(snapshot, ordersList);
       }
-      
+    });
+  }
 
     document.getElementById('order-btn').addEventListener('click', function () {
       if (cart.length === 0) {
@@ -392,11 +349,11 @@ document.addEventListener("DOMContentLoaded", () => {
         root.classList.add("dark");
         darkIcon.innerHTML = sunSVG;
     } else {
-        darkIcon.innerHTML = sunSVG;
-        root.classList.toggle("dark");
+        darkIcon.innerHTML = moonSVG;
     }
 
     darkToggle.addEventListener("click", () => {
+        root.classList.toggle("dark");
         const isDark = root.classList.contains("dark");
 
         darkIcon.innerHTML = isDark ? sunSVG : moonSVG;
@@ -408,13 +365,11 @@ document.addEventListener("DOMContentLoaded", () => {
         menuSection.style.display = "grid";
         cartSection.style.display = "none";
         orderSection.style.display = "none";
-        settingsSection.style.display ="none";
       });
       cartBtn.addEventListener("click", () => {
         menuSection.style.display = "none";
         cartSection.style.display = "block";
         orderSection.style.display = "none";
-        settingsSection.style.display ="none";
       });
       orderBtn.addEventListener("click", () => {
         orderSection.style.display = "block";
@@ -433,15 +388,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         menuSection.style.display = "none";
         cartSection.style.display = "none";
-        settingsSection.style.display ="none";
       });
-      settingsBtn.addEventListener("click", () => {
-        settingsSection.style.display = "block";
-        orderSection.style.display = "none";
-        menuSection.style.display = "none";
-        cartSection.style.display = "none";
-        console.log("opening settings")
-      })
 
     auth.onAuthStateChanged((user) => {
       if (user) {
@@ -493,6 +440,12 @@ document.addEventListener("DOMContentLoaded", () => {
   function loadMenu(filter) {
     const mainCourseRef = db.ref('menu/main_course');
 
+    function changeQty(i, delta) {
+      cart[i].qty += delta;
+      if (cart[i].qty < 1) cart.splice(i, 1);
+      renderCart();
+    }
+
     mainCourseRef.once('value', (snapshot) => {
       const items = snapshot.val();
       const menuGrid = document.querySelector('.menu-grid');
@@ -515,13 +468,13 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
+
   function createMenuItem(key, item) {
     const menuItem = document.createElement('div');
     menuItem.className = 'menu-item';
 
     menuItem.innerHTML = `
       <div class="item-image"><img src="${item.image}"></img></div>
-      <div class="websss"><img src="Webs.png" style="width: 150px; height: auto;"></img></div>
       <div class="item-content">
         <div class="item-header">
           <h4 class="item-name">${item.name}</h4>
@@ -752,76 +705,9 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  function spawnBats(numBats) {
-    const container = document.getElementById("bat-container");
 
-    // Clear old bats
-    container.innerHTML = "";
 
-    for (let i = 0; i < numBats; i++) {
-      const bat = document.createElement("img");
-      bat.src = "bat.png";
-      bat.className = "bat";
 
-      // randomize positions and flight path
-      const startY = Math.random() * window.innerHeight * 0.8 + "px";
-      const endY = Math.random() * window.innerHeight * 0.8 + "px";
-      const startX = "-150px";
-      const endX = "110vw";
-      const midX = Math.random() * window.innerWidth * 0.5 + "px";
-      const midY = Math.random() * window.innerHeight * 0.5 + "px";
-      const scale = 0.5 + Math.random() * 1.5;
 
-      // randomize direction (flip)
-      const flip = Math.random() < 0.5;
 
-      bat.style.setProperty("--start-x", startX);
-      bat.style.setProperty("--start-y", startY);
-      bat.style.setProperty("--end-x", endX);
-      bat.style.setProperty("--end-y", endY);
-      bat.style.setProperty("--mid-x", midX);
-      bat.style.setProperty("--mid-y", midY);
-      bat.style.setProperty("--scale", scale);
 
-      if (flip) bat.style.transform = "scaleX(-1)";
-
-      const duration = 2 + Math.random() * 2; // 2–4 seconds
-      const delay = Math.random() * 0.8; // 0–0.8s delay
-
-      bat.style.animation = `batFly ${duration}s ease-in-out ${delay}s forwards`;
-      container.appendChild(bat);
-    }
-  }
-
-  window.addEventListener("load", () => spawnBats(100));
-
-  const ghostContainer = document.getElementById('ghost-container');
-  const ghostImg = "ghost.png"; // use your ghost image here
-
-  function spawnGhost() {
-    const ghost = document.createElement("img");
-    ghost.src = "ghost.png";
-    ghost.classList.add("ghost");
-
-    // random start and end positions
-    const startX = Math.random() * window.innerWidth + "px";
-    const startY = Math.random() * window.innerHeight + "px";
-    const endX = Math.random() * window.innerWidth + "px";
-    const endY = Math.random() * window.innerHeight + "px";
-
-    // determine direction
-    const dir = parseFloat(startX) - parseFloat(endX) > 0 ? 1 : -1;
-
-    // apply variables
-    ghost.style.setProperty("--start-x", startX);
-    ghost.style.setProperty("--start-y", startY);
-    ghost.style.setProperty("--end-x", endX);
-    ghost.style.setProperty("--end-y", endY);
-    ghost.style.setProperty("--dir", dir);
-
-    ghost.style.animation = `floatGhost ${5 + Math.random() * 5}s linear forwards`;
-    document.getElementById("ghost-container").appendChild(ghost);
-  }
-
-  // spawn a new ghost every 2 seconds
-  setInterval(spawnGhost, Math.floor(Math.random() * (10000 - 5000 + 1)) + 5000);
