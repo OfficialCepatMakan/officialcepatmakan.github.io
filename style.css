@@ -445,7 +445,6 @@
     }
 
     body {
-      font-family: 'Creepster', cursive;
       line-height: 1.6;
       color: var(--text-color);
       background-color: var(--bg-color);
@@ -455,6 +454,10 @@
       background-size: 400px;
       min-height: 100vh;
     }
+
+   h4 {
+      font-family: 'Creepster', cursive;
+   }
     
     .container {
       max-width: 1000px;
@@ -1012,3 +1015,4 @@
             grid-template-columns: 1fr;
         }
     }
+
