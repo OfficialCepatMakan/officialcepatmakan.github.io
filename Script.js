@@ -354,7 +354,6 @@ document.addEventListener("DOMContentLoaded", () => {
           }
         });
       }
-      
 
     document.getElementById('order-btn').addEventListener('click', function () {
       if (cart.length === 0) {
