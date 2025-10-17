@@ -186,6 +186,7 @@ document.addEventListener("DOMContentLoaded", () => {
           return;
         }
         const scrollPos = ordersList.scrollTop;
+        console.log(scrollPos)
         ordersList.innerHTML = ''; // clear existing orders
         const isCourier = Array.isArray(courier) ? courier.includes(mail) : (courier === mail);
       
@@ -824,3 +825,4 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // spawn a new ghost every 2 seconds
   setInterval(spawnGhost, Math.floor(Math.random() * (10000 - 5000 + 1)) + 5000);
+
