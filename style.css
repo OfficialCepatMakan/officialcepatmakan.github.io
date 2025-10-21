@@ -177,6 +177,16 @@
       transform: translateY(-70px);
     }
 
+   #orders-scroll {
+     height: 95vh;
+     overflow-y: scroll;
+     scrollbar-width: none; /* Firefox */
+   }
+
+   #orders-scroll::-webkit-scrollbar {
+     display: none; /* Chrome, Safari, Edge */
+   }
+
     .hero-content h1 {
       font-size: 3.5rem;
       margin-bottom: 10px;
@@ -445,7 +455,7 @@
     }
 
     body {
-      font-family: 'Creepster', cursive;
+      font-family: "New Rocker", system-ui;
       line-height: 1.6;
       color: var(--text-color);
       background-color: var(--bg-color);
@@ -1013,5 +1023,3 @@
             grid-template-columns: 1fr;
         }
     }
-
-
