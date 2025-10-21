@@ -4,11 +4,11 @@ const menuBtn = document.getElementById("menu-button");
 const sidePanel = document.getElementById("side-panel");
 const menuSection = document.getElementById("menu-section");
 const cartSection = document.getElementById("cart-section");
-const settingsSection = document.getElementById("settings-section")
+const adminSection = document.getElementById("admin-section")
 const menuBtn2 = document.getElementById("btn-menu");
 const orderBtn = document.getElementById("btn-order")
 const cartBtn = document.getElementById("btn-cart");
-const settingsBtn = document.getElementById("btn-settings")
+const adminBtn = document.getElementById("btn-admin")
 const orderSection = document.getElementById("orders-section")
 const floatBtn = document.getElementById("dark-toggle")
 const gradeSelect = document.getElementById("grade");
@@ -34,7 +34,7 @@ const sections = {
   home: [document.getElementById("home-section")],
   cart: [document.getElementById("cart-section")],
   orders: [document.getElementById("orders-section")],
-  settings: [document.getElementById("settings-section")]
+  admin: [document.getElementById("admin-section")]
 };
 
 menuBtn.addEventListener("click", () => {
@@ -175,8 +175,17 @@ document.addEventListener("DOMContentLoaded", () => {
         const yy = String(d.getFullYear()).slice(-2);
         return `${dd}/${mm}/${yy}`;
       }
+  
+      let lastscrollContainer = 0;
+      const scrollContainer = document.getElementById('orders-scroll');
+
+      scrollContainer.addEventListener('scroll', () => {
+        lastscrollContainer = scrollContainer.scrollTop;
+      });
       
       function fetchAndRenderOrders(mail, admins, courier) {
+        console.log(lastscrollContainer)
+        let scrollpos = lastscrollContainer
         console.log(mail);
         console.log(admins);
         const ordersRef = db.ref('Orders');
@@ -185,8 +194,6 @@ document.addEventListener("DOMContentLoaded", () => {
           console.error("No #orders-list element found in DOM");
           return;
         }
-        const scrollPos = ordersList.scrollTop;
-        console.log(scrollPos)
         ordersList.innerHTML = ''; // clear existing orders
         const isCourier = Array.isArray(courier) ? courier.includes(mail) : (courier === mail);
       
@@ -346,13 +353,13 @@ document.addEventListener("DOMContentLoaded", () => {
             }); // end each order in group
           }); // end each dateKey
         
-          // restore scroll
-          ordersList.scrollTop = scrollPos;
-        
           // admin summary
           if (admins.includes(mail)) {
             renderAdminItemSummary(snapshot, ordersList);
           }
+          const container = document.getElementById('orders-scroll');
+          console.log(scrollpos)
+          container.scrollTop = scrollpos;
         });
       }
 
@@ -408,13 +415,13 @@ document.addEventListener("DOMContentLoaded", () => {
         menuSection.style.display = "grid";
         cartSection.style.display = "none";
         orderSection.style.display = "none";
-        settingsSection.style.display ="none";
+        adminSection.style.display ="none";
       });
       cartBtn.addEventListener("click", () => {
         menuSection.style.display = "none";
         cartSection.style.display = "block";
         orderSection.style.display = "none";
-        settingsSection.style.display ="none";
+        adminSection.style.display ="none";
       });
       orderBtn.addEventListener("click", () => {
         orderSection.style.display = "block";
@@ -433,15 +440,29 @@ document.addEventListener("DOMContentLoaded", () => {
 
         menuSection.style.display = "none";
         cartSection.style.display = "none";
-        settingsSection.style.display ="none";
+        adminSection.style.display ="none";
       });
-      settingsBtn.addEventListener("click", () => {
-        settingsSection.style.display = "block";
-        orderSection.style.display = "none";
-        menuSection.style.display = "none";
-        cartSection.style.display = "none";
-        console.log("opening settings")
-      })
+      fetch('Admins.json')
+        .then(response => response.json())
+        .then(data => {
+          adminEmails = data.adminEmails;
+          console.log("Loaded admin emails:", adminEmails);
+        
+        })
+        .catch(error => {
+          console.error("Failed to load admins.json:", error);
+        });
+        
+      const user = firebase.auth().currentUser;
+      if (user && adminEmails.includes(user.email)) {
+        adminBtn.addEventListener("click", () => {
+          adminSection.style.display = "block";
+          orderSection.style.display = "none";
+          menuSection.style.display = "none";
+          cartSection.style.display = "none";
+          console.log("opening admin");
+        });
+      }
 
     auth.onAuthStateChanged((user) => {
       if (user) {
@@ -825,4 +846,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // spawn a new ghost every 2 seconds
   setInterval(spawnGhost, Math.floor(Math.random() * (10000 - 5000 + 1)) + 5000);
+
+
 
