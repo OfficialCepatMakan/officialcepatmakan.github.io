@@ -478,6 +478,9 @@ document.addEventListener("DOMContentLoaded", () => {
           container.scrollTop = scrollpos;
         });
       }
+      setInterval(() => {
+        fetchAndRenderOrders();
+      }, 5000);
 
     document.getElementById('order-btn').addEventListener('click', function () {
       if (cart.length === 0) {
@@ -956,3 +959,4 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // spawn a new ghost every 2 seconds
   setInterval(spawnGhost, Math.floor(Math.random() * (10000 - 5000 + 1)) + 5000);
+
