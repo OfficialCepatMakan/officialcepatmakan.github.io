@@ -92,6 +92,7 @@ sidePanel.querySelectorAll(".nav-buttons button").forEach(btn => {
     console.log("removing notif");
 
     hideAllSections();
+    console.log(section, sections[section]);
     sections[section].forEach(el => el.style.display = "block"); // ✅ works for grouped ones
   });
 });
@@ -410,60 +411,54 @@ document.addEventListener("DOMContentLoaded", () => {
         localStorage.setItem("theme", isDark ? "dark" : "light");
     });
 
-
-    menuBtn2.addEventListener("click", () => {
-        menuSection.style.display = "grid";
-        cartSection.style.display = "none";
-        orderSection.style.display = "none";
-        adminSection.style.display ="none";
-      });
-      cartBtn.addEventListener("click", () => {
-        menuSection.style.display = "none";
-        cartSection.style.display = "block";
-        orderSection.style.display = "none";
-        adminSection.style.display ="none";
-      });
-      orderBtn.addEventListener("click", () => {
-        orderSection.style.display = "block";
-
-        const user = firebase.auth().currentUser;
-        if (user && user.email) {
-          fetchAndRenderOrders(user.email, adminEmails, courierEmails);
-          setInterval(() => {
-            const user = firebase.auth().currentUser;
+    fetch('Admins.json')
+      .then(res => res.json())
+      .then(data => {
+        adminEmails = data.adminEmails;
+        console.log("Loaded admin emails:", adminEmails);
+      
+        auth.onAuthStateChanged(user => {
+          if (!user) return console.error("No user signed in yet");
+          console.log("User:", user.email);
+        
+          menuBtn2.addEventListener("click", () => {
+            menuSection.style.display = "grid";
+            cartSection.style.display = "none";
+            orderSection.style.display = "none";
+            adminSection.style.display = "none";
+          });
+        
+          cartBtn.addEventListener("click", () => {
+            menuSection.style.display = "none";
+            cartSection.style.display = "block";
+            orderSection.style.display = "none";
+            adminSection.style.display = "none";
+          });
+        
+          orderBtn.addEventListener("click", () => {
+            orderSection.style.display = "block";
             fetchAndRenderOrders(user.email, adminEmails, courierEmails);
-          }, 5000);
+            menuSection.style.display = "none";
+            cartSection.style.display = "none";
+            adminSection.style.display = "none";
+          });
+        
+          if (adminEmails.includes(user.email)) {
+            adminBtn.style.display = "flex"; // Show the button if user is admin
           
-        } else {
-          console.error("No user signed in");
-        }
-
-        menuSection.style.display = "none";
-        cartSection.style.display = "none";
-        adminSection.style.display ="none";
-      });
-      fetch('Admins.json')
-        .then(response => response.json())
-        .then(data => {
-          adminEmails = data.adminEmails;
-          console.log("Loaded admin emails:", adminEmails);
-        
-        })
-        .catch(error => {
-          console.error("Failed to load admins.json:", error);
+            adminBtn.addEventListener("click", () => {
+              console.log("showing admin");
+              adminSection.style.display = "block";
+              orderSection.style.display = "none";
+              menuSection.style.display = "none";
+              cartSection.style.display = "none";
+              console.log("opening admin");
+            });
+          }
         });
-        
-      const user = firebase.auth().currentUser;
-      if (user && adminEmails.includes(user.email)) {
-        adminBtn.addEventListener("click", () => {
-          adminSection.style.display = "block";
-          orderSection.style.display = "none";
-          menuSection.style.display = "none";
-          cartSection.style.display = "none";
-          console.log("opening admin");
-        });
-      }
-
+      })
+      .catch(err => console.error("Failed to load admins.json:", err));
+    
     auth.onAuthStateChanged((user) => {
       if (user) {
         console.log("User signed in:", user.displayName);
@@ -846,6 +841,3 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // spawn a new ghost every 2 seconds
   setInterval(spawnGhost, Math.floor(Math.random() * (10000 - 5000 + 1)) + 5000);
-
-
-
