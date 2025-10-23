@@ -573,10 +573,16 @@ document.addEventListener("DOMContentLoaded", () => {
         });
       })
       .catch(err => console.error("Failed to load admins.json:", err));
-    const user = firebase.auth().currentUser;
     setInterval(() => {
-      fetchAndRenderOrders(user.email, adminEmails, courierEmails);
+      const user = firebase.auth().currentUser;
+      if (user && user.email) {
+        fetchAndRenderOrders(user.email, adminEmails, courierEmails);
+        console.log("🔄 Orders fetched for:", user.email);
+      } else {
+        console.warn("⚠️ No user signed in, skipping fetch");
+      }
     }, 5000);
+
     auth.onAuthStateChanged((user) => {
       if (user) {
         console.log("User signed in:", user.displayName);
@@ -959,5 +965,3 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // spawn a new ghost every 2 seconds
   setInterval(spawnGhost, Math.floor(Math.random() * (10000 - 5000 + 1)) + 5000);
-
-
