@@ -841,3 +841,81 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // spawn a new ghost every 2 seconds
   setInterval(spawnGhost, Math.floor(Math.random() * (10000 - 5000 + 1)) + 5000);
+    form.addEventListener('submit', e => {
+    e.preventDefault();
+
+    const nameInput = document.getElementById('name').value.trim();
+    const priceInput = document.getElementById('price').value.trim();
+    const descriptionInput = document.getElementById('description').value.trim();
+    const imageInput = document.getElementById('image').value.trim();
+    const stockInput = document.getElementById('stock').value.trim();
+    const stock = stockInput ? parseInt(stockInput) : null;
+
+    if (!nameInput) {
+      alert('You must enter the name of the item!');
+      return;
+    }
+
+    const mainCourseRef = db.ref('menu/main_course');
+
+    mainCourseRef.once('value').then(snapshot => {
+      const items = snapshot.val() || {};
+      let foundKey = null;
+
+      // Check if item with same name exists
+      for (let key in items) {
+        if (items[key].name.toLowerCase() === nameInput.toLowerCase()) {
+          foundKey = key;
+          break;
+        }
+      }
+
+      if (foundKey) {
+        // Item exists → update only the filled fields, keep old ones
+        const existingItem = items[foundKey];
+        const updatedItem = {
+          name: nameInput || existingItem.name,
+          price: priceInput ? parseInt(priceInput) : existingItem.price,
+          description: descriptionInput || existingItem.description,
+          image: imageInput || existingItem.image,
+          stock: stock !== null ? stock : existingItem.stock
+        };
+
+        db.ref('menu/main_course/' + foundKey).set(updatedItem)
+          .then(() => {
+            alert(`Updated item "${nameInput}" successfully!`);
+            form.reset();
+            loadMenu();
+          })
+          .catch(err => alert('Error updating item: ' + err.message));
+      } else {
+        // Item does not exist → require all fields
+        if (!priceInput || !descriptionInput || !imageInput || stock === null) {
+          alert('New item must have all fields filled!');
+          return;
+        }
+
+        let filter = document.getElementById("filterdropdown").value
+        const newItemKey = mainCourseRef.push().key;
+        const newItem = {
+          name: nameInput,
+          price: parseInt(priceInput),
+          description: descriptionInput,
+          image: imageInput,
+          stock,
+          filter: filter
+        };
+
+        const updates = {};
+        updates['/menu/main_course/' + newItemKey] = newItem;
+
+        db.ref().update(updates)
+          .then(() => {
+            alert('New menu item added!');
+            form.reset();
+            loadMenu();
+          })
+          .catch(err => alert('Error: ' + err.message));
+      }
+    });
+  });
