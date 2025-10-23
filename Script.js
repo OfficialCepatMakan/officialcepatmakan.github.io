@@ -573,6 +573,7 @@ document.addEventListener("DOMContentLoaded", () => {
         });
       })
       .catch(err => console.error("Failed to load admins.json:", err));
+    const user = firebase.auth().currentUser;
     setInterval(() => {
       fetchAndRenderOrders(user.email, adminEmails, courierEmails);
     }, 5000);
@@ -958,4 +959,5 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // spawn a new ghost every 2 seconds
   setInterval(spawnGhost, Math.floor(Math.random() * (10000 - 5000 + 1)) + 5000);
+
 
