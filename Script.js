@@ -478,9 +478,6 @@ document.addEventListener("DOMContentLoaded", () => {
           container.scrollTop = scrollpos;
         });
       }
-      setInterval(() => {
-        fetchAndRenderOrders();
-      }, 5000);
 
     document.getElementById('order-btn').addEventListener('click', function () {
       if (cart.length === 0) {
@@ -576,7 +573,9 @@ document.addEventListener("DOMContentLoaded", () => {
         });
       })
       .catch(err => console.error("Failed to load admins.json:", err));
-    
+    setInterval(() => {
+      fetchAndRenderOrders(user.email, adminEmails, courierEmails);
+    }, 5000);
     auth.onAuthStateChanged((user) => {
       if (user) {
         console.log("User signed in:", user.displayName);
