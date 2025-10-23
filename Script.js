@@ -131,7 +131,7 @@ document.addEventListener("DOMContentLoaded", () => {
       e.preventDefault();
       console.log("📝 Form submitted");
 
-      const nameInput = document.getElementById('name').value.trim();
+      const nameInput = document.getElementById('input-name').value.trim();
       const priceInput = document.getElementById('price').value.trim();
       const descriptionInput = document.getElementById('description').value.trim();
       const imageInput = document.getElementById('image').value.trim();
