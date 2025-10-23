@@ -123,6 +123,121 @@ document.addEventListener("DOMContentLoaded", () => {
       .catch(error => {
         console.error("Failed to load courier.json:", error);
       });
+      console.log("🚀 Menu form script loaded");
+    const itemCount = document.querySelector('.item-count');
+    const form = document.getElementById('menuForm');
+
+    form.addEventListener('submit', e => {
+      e.preventDefault();
+      console.log("📝 Form submitted");
+
+      const nameInput = document.getElementById('name').value.trim();
+      const priceInput = document.getElementById('price').value.trim();
+      const descriptionInput = document.getElementById('description').value.trim();
+      const imageInput = document.getElementById('image').value.trim();
+      const stockInput = document.getElementById('stock').value.trim();
+      const stock = stockInput ? parseInt(stockInput) : null;
+
+      console.log("📦 Form values:", {
+        nameInput,
+        priceInput,
+        descriptionInput,
+        imageInput,
+        stock
+      });
+
+      if (!nameInput) {
+        console.warn("⚠️ No name entered");
+        alert('You must enter the name of the item!');
+        return;
+      }
+
+      const mainCourseRef = db.ref('menu/main_course');
+      console.log("🔗 Fetching existing items...");
+
+      mainCourseRef.once('value').then(snapshot => {
+        const items = snapshot.val() || {};
+        console.log("📁 Existing items in DB:", items);
+
+        let foundKey = null;
+
+        // Check if item with same name exists
+        for (let key in items) {
+          if (items[key].name.toLowerCase() === nameInput.toLowerCase()) {
+            foundKey = key;
+            break;
+          }
+        }
+
+        if (foundKey) {
+          console.log(`🛠️ Item "${nameInput}" already exists, updating...`);
+          const existingItem = items[foundKey];
+
+          const updatedItem = {
+            name: nameInput || existingItem.name,
+            price: priceInput ? parseInt(priceInput, 10) : existingItem.price,
+            description: descriptionInput || existingItem.description,
+            image: imageInput || existingItem.image,
+            stock: stock !== null ? stock : existingItem.stock
+          };
+
+          console.log("🔧 Updated item data:", updatedItem);
+
+          db.ref('menu/main_course/' + foundKey).update(updatedItem)
+            .then(() => {
+              console.log(`✅ Updated item "${nameInput}" successfully`);
+              alert(`Updated item "${nameInput}" successfully!`);
+              form.reset();
+              loadMenu();
+            })
+            .catch(err => {
+              console.error("💥 Error updating item:", err);
+              alert('Error updating item: ' + err.message);
+            });
+
+        } else {
+          console.log(`🆕 Item "${nameInput}" not found, creating new one...`);
+
+          if (!priceInput || !descriptionInput || !imageInput || stock === null) {
+            console.warn("⚠️ Missing fields for new item");
+            alert('New item must have all fields filled!');
+            return;
+          }
+
+          const filter = document.getElementById("filterdropdown").value;
+          const newItemKey = mainCourseRef.push().key;
+
+          const newItem = {
+            name: nameInput,
+            price: parseInt(priceInput, 10),
+            description: descriptionInput,
+            image: imageInput,
+            stock,
+            filter
+          };
+
+          console.log("🆕 New item data:", newItem);
+
+          const updates = {};
+          updates['/menu/main_course/' + newItemKey] = newItem;
+
+          db.ref().update(updates)
+            .then(() => {
+              console.log(`✅ Added new item "${nameInput}" to DB`);
+              alert('New menu item added!');
+              form.reset();
+              loadMenu();
+            })
+            .catch(err => {
+              console.error("💥 Error adding new item:", err);
+              alert('Error: ' + err.message);
+            });
+        }
+      }).catch(err => {
+        console.error("💣 Failed to fetch existing items:", err);
+      });
+    });
+
 
       // Helper: parse many timestamp formats into a Date (or null)
       function parseTimestampToDate(ts) {
@@ -841,117 +956,3 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // spawn a new ghost every 2 seconds
   setInterval(spawnGhost, Math.floor(Math.random() * (10000 - 5000 + 1)) + 5000);
-  console.log("🚀 Menu form script loaded");
-  const itemCount = document.querySelector('.item-count');
-  const form = document.getElementById('menuForm');
-
-  form.addEventListener('submit', e => {
-    e.preventDefault();
-    console.log("📝 Form submitted");
-
-    const nameInput = document.getElementById('name').value.trim();
-    const priceInput = document.getElementById('price').value.trim();
-    const descriptionInput = document.getElementById('description').value.trim();
-    const imageInput = document.getElementById('image').value.trim();
-    const stockInput = document.getElementById('stock').value.trim();
-    const stock = stockInput ? parseInt(stockInput) : null;
-
-    console.log("📦 Form values:", {
-      nameInput,
-      priceInput,
-      descriptionInput,
-      imageInput,
-      stock
-    });
-
-    if (!nameInput) {
-      console.warn("⚠️ No name entered");
-      alert('You must enter the name of the item!');
-      return;
-    }
-
-    const mainCourseRef = db.ref('menu/main_course');
-    console.log("🔗 Fetching existing items...");
-
-    mainCourseRef.once('value').then(snapshot => {
-      const items = snapshot.val() || {};
-      console.log("📁 Existing items in DB:", items);
-
-      let foundKey = null;
-
-      // Check if item with same name exists
-      for (let key in items) {
-        if (items[key].name.toLowerCase() === nameInput.toLowerCase()) {
-          foundKey = key;
-          break;
-        }
-      }
-
-      if (foundKey) {
-        console.log(`🛠️ Item "${nameInput}" already exists, updating...`);
-        const existingItem = items[foundKey];
-
-        const updatedItem = {
-          name: nameInput || existingItem.name,
-          price: priceInput ? parseInt(priceInput, 10) : existingItem.price,
-          description: descriptionInput || existingItem.description,
-          image: imageInput || existingItem.image,
-          stock: stock !== null ? stock : existingItem.stock
-        };
-
-        console.log("🔧 Updated item data:", updatedItem);
-
-        db.ref('menu/main_course/' + foundKey).update(updatedItem)
-          .then(() => {
-            console.log(`✅ Updated item "${nameInput}" successfully`);
-            alert(`Updated item "${nameInput}" successfully!`);
-            form.reset();
-            loadMenu();
-          })
-          .catch(err => {
-            console.error("💥 Error updating item:", err);
-            alert('Error updating item: ' + err.message);
-          });
-
-      } else {
-        console.log(`🆕 Item "${nameInput}" not found, creating new one...`);
-
-        if (!priceInput || !descriptionInput || !imageInput || stock === null) {
-          console.warn("⚠️ Missing fields for new item");
-          alert('New item must have all fields filled!');
-          return;
-        }
-
-        const filter = document.getElementById("filterdropdown").value;
-        const newItemKey = mainCourseRef.push().key;
-
-        const newItem = {
-          name: nameInput,
-          price: parseInt(priceInput, 10),
-          description: descriptionInput,
-          image: imageInput,
-          stock,
-          filter
-        };
-
-        console.log("🆕 New item data:", newItem);
-
-        const updates = {};
-        updates['/menu/main_course/' + newItemKey] = newItem;
-
-        db.ref().update(updates)
-          .then(() => {
-            console.log(`✅ Added new item "${nameInput}" to DB`);
-            alert('New menu item added!');
-            form.reset();
-            loadMenu();
-          })
-          .catch(err => {
-            console.error("💥 Error adding new item:", err);
-            alert('Error: ' + err.message);
-          });
-      }
-    }).catch(err => {
-      console.error("💣 Failed to fetch existing items:", err);
-    });
-  });
