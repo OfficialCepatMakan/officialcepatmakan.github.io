@@ -1109,6 +1109,16 @@
         cursor: pointer;
         font-size: 1rem;
     }
+    .original-price {
+      text-decoration: line-through;
+      color: var(--danger-color);
+      margin-right: 6px;
+      font-size: 9px;
+    }
+    .discounted-price {
+      color: var(--accent-hover);
+      font-weight: bold;
+    }
     .order-btn:hover {
         background: var(--accent-hover);
     }
