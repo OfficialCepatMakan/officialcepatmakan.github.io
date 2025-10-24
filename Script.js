@@ -654,18 +654,28 @@ document.addEventListener("DOMContentLoaded", () => {
       document.querySelector('.item-count').textContent = `${count} items`;
     });
   }
-
+  
   function createMenuItem(key, item) {
     const menuItem = document.createElement('div');
     menuItem.className = 'menu-item';
-
+  
+    // Calculate discounted price if any
+    let priceHTML = `Rp ${item.price.toLocaleString('id-ID')}`;
+    if (item.discount && item.discount > 0) {
+      const discountedPrice = item.price * (1 - item.discount / 100);
+      priceHTML = `
+        <span class="original-price">Rp ${item.price.toLocaleString('id-ID')}</span>
+        <span class="discounted-price">Rp ${discountedPrice.toLocaleString('id-ID')}</span>
+      `;
+    }
+  
     menuItem.innerHTML = `
-      <div class="item-image"><img src="${item.image}"></img></div>
-      <div class="websss"><img src="Webs.png" style="width: 150px; height: auto;"></img></div>
+      <div class="item-image"><img src="${item.image}"></div>
+      <div class="websss"><img src="Webs.png" style="width: 150px; height: auto;"></div>
       <div class="item-content">
         <div class="item-header">
           <h4 class="item-name">${item.name}</h4>
-          <span class="item-price">Rp ${item.price.toLocaleString('id-ID')}</span>
+          <span class="item-price">${priceHTML}</span>
         </div>
         <p class="item-description">${item.description}</p>
         <p class="item-stock">Stock: ${item.stock}</p>
@@ -679,10 +689,12 @@ document.addEventListener("DOMContentLoaded", () => {
         </div>
       </div>
     `;
-
+  
     setupQuantityLogic(menuItem, key, item, item.stock);
     return menuItem;
   }
+  
+  
   function updateCartDisplay() {
     const cartCount = document.querySelector('.cart-count');
     const cartItemsContainer = document.querySelector('.cart-items');
@@ -710,24 +722,33 @@ document.addEventListener("DOMContentLoaded", () => {
 
     cart.forEach((item) => {
       totalItems += item.quantity;
-      totalPrice += item.price * item.quantity;
-      console.log(item)
-
+    
+      // Apply discount if available
+      const discount = item.discount ? item.discount : 0;
+      const discountedPrice = item.price - (item.price * discount / 100);
+      const itemTotal = discountedPrice * item.quantity;
+    
+      totalPrice += itemTotal;
+    
       const cartItem = document.createElement('div');
       cartItem.className = 'cart-item';
-
+    
       cartItem.innerHTML = `
         <div class="item-info">
           <h4>${item.name}</h4>
-          <p>Rp ${item.price.toLocaleString('id-ID')} × ${item.quantity}</p>
+          <p>
+            Rp ${discountedPrice.toLocaleString('id-ID')} × ${item.quantity}
+            ${discount > 0 ? `<span class="discount-tag">(${discount}% off)</span>` : ""}
+          </p>
         </div>
         <div class="item-controls">
           <button class="qty-btn minus">−</button>
           <span>${item.quantity}</span>
           <button class="qty-btn plus">+</button>
         </div>
-        <span>Rp ${(item.price * item.quantity).toLocaleString('id-ID')}</span>
+        <span>Rp ${itemTotal.toLocaleString('id-ID')}</span>
       `;
+    
 
       const minusBtn = cartItem.querySelector('.qty-btn.minus');
       const plusBtn = cartItem.querySelector('.qty-btn.plus');
@@ -795,17 +816,28 @@ document.addEventListener("DOMContentLoaded", () => {
         }
       }
 
-      // ✅ Build order object
+      // ✅ Build order object safely
       const orderData = {
         name,
         grade,
         class: className,
         paymentMethod,
-        items: cart,
-        total: cart.reduce((sum, item) => sum + item.price * item.quantity, 0),
         mail,
-        timestamp: `${String(new Date().getDate()).padStart(2, '0')}/${String(new Date().getMonth() + 1).padStart(2, '0')}/${String(new Date().getFullYear()).slice(-2)}`
+        timestamp: `${String(new Date().getDate()).padStart(2, '0')}/${String(new Date().getMonth() + 1).padStart(2, '0')}/${String(new Date().getFullYear()).slice(-2)}`,
+        items: cart.map(item => ({
+          name: item.name ?? 'Unnamed Item',
+          price: item.price ?? 0,
+          quantity: item.quantity ?? 1,
+          stock: item.stock ?? 0,
+          discount: item.discount ?? 0
+        })),
+        total: cart.reduce((sum, item) => {
+          const discount = item.discount ?? 0;
+          const discountedPrice = item.price - (item.price * discount / 100);
+          return sum + discountedPrice * item.quantity;
+        }, 0)
       };
+
 
       // ✅ Push order
       ordersRef.push(orderData)
@@ -876,7 +908,8 @@ document.addEventListener("DOMContentLoaded", () => {
           name: item.name,
           price: item.price,
           quantity: quantity,
-          stock: item.stock
+          stock: item.stock,
+          discount: item.discount
         });
         alert("Item has been added to cart, press the 3 dots button to open cart")
         document.getElementById("btn-cart").classList.add("has-notification");
@@ -965,3 +998,4 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // spawn a new ghost every 2 seconds
   setInterval(spawnGhost, Math.floor(Math.random() * (10000 - 5000 + 1)) + 5000);
+
