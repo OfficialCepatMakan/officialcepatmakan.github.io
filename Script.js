@@ -657,20 +657,27 @@ document.addEventListener("DOMContentLoaded", () => {
 
       menuGrid.innerHTML = ''; // Clear existing items
 
-      for (let key in items) {
-        const item = items[key];
+      // Convert object to array, then sort
+      const sortedItems = Object.entries(items)
+        .filter(([key, item]) => filter === "all" || item.filter === filter)
+        .sort(([, a], [, b]) => {
+          // Put limited == "yes" first
+          if (a.limited === "yes" && b.limited !== "yes") return -1;
+          if (a.limited !== "yes" && b.limited === "yes") return 1;
+          return 0;
+        });
 
-        // Check filter (if "all", show everything)
-        if (filter === "all" || item.filter === filter) {
-          const menuItem = createMenuItem(key, item);
-          menuGrid.appendChild(menuItem);
-          count++;
-        }
+      // Now render the sorted items
+      for (const [key, item] of sortedItems) {
+        const menuItem = createMenuItem(key, item);
+        menuGrid.appendChild(menuItem);
+        count++;
       }
 
       document.querySelector('.item-count').textContent = `${count} items`;
     });
   }
+
   
   function createMenuItem(key, item) {
     const menuItem = document.createElement('div');
@@ -678,6 +685,7 @@ document.addEventListener("DOMContentLoaded", () => {
   
     // Calculate discounted price if any
     let priceHTML = `Rp ${item.price.toLocaleString('id-ID')}`;
+    const limited = item.limited == "yes" ? "[LIMITED]" : "";
     if (item.discount && item.discount > 0) {
       const discountedPrice = item.price * (1 - item.discount / 100);
       priceHTML = `
@@ -685,13 +693,16 @@ document.addEventListener("DOMContentLoaded", () => {
         <span class="discounted-price">Rp ${discountedPrice.toLocaleString('id-ID')}</span>
       `;
     }
+    if (item.limited === "yes") {
+      menuItem.classList.add('limited-glow');
+    }
   
     menuItem.innerHTML = `
       <div class="item-image"><img src="${item.image}"></div>
       <div class="websss"><img src="Webs.png" style="width: 150px; height: auto;"></div>
       <div class="item-content">
         <div class="item-header">
-          <h4 class="item-name">${item.name}</h4>
+          <h4 class="item-name"><span class="bold-red">${limited}</span> ${item.name}</h4>
           <span class="item-price">${priceHTML}</span>
         </div>
         <p class="item-description">${item.description}</p>
@@ -1015,4 +1026,3 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // spawn a new ghost every 2 seconds
   setInterval(spawnGhost, Math.floor(Math.random() * (10000 - 5000 + 1)) + 5000);
-
