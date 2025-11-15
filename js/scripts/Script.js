@@ -431,9 +431,6 @@ document.addEventListener("DOMContentLoaded", () => {
                   </button>`;
                 
                 EmailP = `<p><strong>Email:</strong> ${order.mail}</p>`;
-                const cancelBtn = document.createElement('button');
-                cancelBtn.className = 'cancel-order';
-                cancelBtn.textContent = 'Cancel Order';
               }
             
               const taken = order.courier && order.courier !== "";
@@ -466,6 +463,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 ${EmailP}
                 ${courierHTML}
                 ${deleteButtonHTML}
+                ${cancelBtn}
               `;
             
               // append card to DOM
@@ -475,6 +473,9 @@ document.addEventListener("DOMContentLoaded", () => {
               if (admins.includes(mail)) {
                 // DELETE button (keep your original SVG button)
                 const deleteBtn = orderDiv.querySelector('.remove-order');
+                const cancelBtn = document.createElement('button');
+                cancelBtn.className = 'cancel-order';
+                cancelBtn.textContent = 'Cancel Order';
                 if (deleteBtn) {
                   deleteBtn.addEventListener('click', () => {
                     if (!confirm("Are you sure you want to delete this order?")) return;
@@ -491,7 +492,6 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
                 
               // AFTER you set orderDiv.innerHTML
-              const cancelBtn = orderDiv.querySelector('.cancel-order'); // note the dot
               if (cancelBtn) {
                 cancelBtn.addEventListener('click', () => {
                   if (!confirm("Are you sure you want to cancel this order?")) return;
