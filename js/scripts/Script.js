@@ -490,26 +490,23 @@ document.addEventListener("DOMContentLoaded", () => {
                   });
                 }
                 
-                const cancelBtn = orderDiv.querySelector('.cancel-order'); // note the dot for class
+              // AFTER you set orderDiv.innerHTML
+              const cancelBtn = orderDiv.querySelector('.cancel-order'); // note the dot
+              if (cancelBtn) {
                 cancelBtn.addEventListener('click', () => {
                   if (!confirm("Are you sure you want to cancel this order?")) return;
                 
-                  // Copy order data + track who cancelled + timestamp
                   const orderData = { 
                     ...order, 
                     cancelledBy: mail, 
                     cancelledAt: Date.now() 
                   };
                 
-                  // Save to Cancelled node
                   db.ref('Cancelled/' + orderId).set(orderData)
-                    .then(() => {
-                      // Remove from Orders
-                      return db.ref('Orders/' + orderId).remove();
-                    })
+                    .then(() => db.ref('Orders/' + orderId).remove())
                     .then(() => {
                       alert("Order cancelled successfully.");
-                      fetchAndRenderOrders(mail, admins, courier); // refresh list
+                      fetchAndRenderOrders(mail, admins, courier);
                     })
                     .catch(err => {
                       console.error("Error cancelling order:", err);
@@ -517,7 +514,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     });
                 });
               }
-
+              
               // attach courier checkbox listener
               if (isCourier) {
                 const takeOrderCheckbox = orderDiv.querySelector('.take-order');
@@ -543,7 +540,7 @@ document.addEventListener("DOMContentLoaded", () => {
                   });
                 }
               }
-            }); // end each order in group
+            }}); // end each order in group
           }); // end each dateKey
         
           // admin summary
