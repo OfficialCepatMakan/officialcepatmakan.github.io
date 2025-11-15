@@ -696,7 +696,9 @@ document.addEventListener("DOMContentLoaded", () => {
         auth.onAuthStateChanged(user => {
           if (!user) return console.error("No user signed in yet");
           console.log("User:", user.email);
+          console.log("check cancel")
           checkMyCancelledOrders(user.email);
+          console.log("done checking cancel")
         
           menuBtn2.addEventListener("click", () => {
             menuSection.style.display = "grid";
