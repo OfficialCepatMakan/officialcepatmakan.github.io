@@ -73,7 +73,7 @@
       color: var(--text-color);
     }
 
-    .order-item .cancel-order {
+    .order-item {
       position: relative; /* for absolute positioning fallback */
       display: flex;
       flex-direction: column;
