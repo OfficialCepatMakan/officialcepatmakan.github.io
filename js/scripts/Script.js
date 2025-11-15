@@ -758,6 +758,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     auth.onAuthStateChanged((user) => {
+      checkMyCancelledOrders(user.email);
       if (user) {
         console.log("User signed in:", user.displayName);
 
