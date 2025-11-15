@@ -53,6 +53,7 @@ function checkMyCancelledOrders(userEmail) {
   const cancelledRef = db.ref('Cancelled');
   cancelledRef.once('value', snapshot => {
     if (!snapshot.exists()) return;
+
     const cancelledOrders = [];
     snapshot.forEach(child => {
       const order = child.val();
@@ -68,13 +69,16 @@ function checkMyCancelledOrders(userEmail) {
         li.textContent = `Your order "${order.name}" was cancelled. Reason: ${order.reason || 'No reason provided'}`;
         list.appendChild(li);
       });
+
       popup.style.display = 'flex';
+
       document.getElementById('close-popup').addEventListener('click', () => {
         popup.style.display = 'none';
       });
     }
   });
 }
+
 
 
 menuBtn.addEventListener("click", () => {
