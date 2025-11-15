@@ -84,27 +84,6 @@ function waitForPopupThenCheck(userEmail) {
   }, 50);
 }
 
-auth.onAuthStateChanged(user => {
-  if (!user) return;
-  waitForPopupThenCheck(user.email);
-});
-
-
-auth.onAuthStateChanged(user => {
-  if (!user) return;
-  waitForPopupThenCheck(user.email);
-});
-
-
-// Safe initialization on DOMContentLoaded
-document.addEventListener('DOMContentLoaded', () => {
-  auth.onAuthStateChanged(user => {
-    if (!user) return;
-    waitForPopupThenCheck(user.email);
-  });
-});
-
-
 menuBtn.addEventListener("click", () => {
   sidePanel.classList.toggle("show");
   menuBtn.classList.toggle("show");
@@ -701,9 +680,12 @@ document.addEventListener("DOMContentLoaded", () => {
       
         auth.onAuthStateChanged(user => {
           if (!user) return console.error("No user signed in yet");
+          waitForPopupThenCheck(user.email);
+          setInterval(() => {
+            waitForPopupThenCheck(use.email)
+          }, 50);
           console.log("User:", user.email);
           console.log("check cancel")
-          waitForPopupThenCheck(user.email);
           console.log("done checking cancel")
         
           menuBtn2.addEventListener("click", () => {
