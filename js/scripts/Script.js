@@ -490,7 +490,7 @@ document.addEventListener("DOMContentLoaded", () => {
                   });
                 }
                 
-                const cancelBtn = document.querySelector('cancel-order')
+                const cancelBtn = orderDiv.querySelector('.cancel-order'); // note the dot for class
                 cancelBtn.addEventListener('click', () => {
                   if (!confirm("Are you sure you want to cancel this order?")) return;
                 
