@@ -50,7 +50,6 @@ function toggleBigButton() {
 }
 
 function checkMyCancelledOrders(userEmail, popup, reasonP, closeBtn) {
-  console.log("starting scan");
 
   db.ref('Cancelled').orderByChild('mail').equalTo(userEmail)
     .once('value')
@@ -149,10 +148,8 @@ sidePanel.querySelectorAll(".nav-buttons button").forEach(btn => {
     const section = btn.getAttribute("data-section");
     menuBtn3.classList.remove("has-notification");
     btnCart.classList.remove("has-notification");
-    console.log("removing notif");
 
     hideAllSections();
-    console.log(section, sections[section]);
     sections[section].forEach(el => el.style.display = "block");
   });
 });
@@ -202,13 +199,11 @@ document.addEventListener("DOMContentLoaded", () => {
       .catch(error => {
         console.error("Failed to load courier.json:", error);
       });
-    console.log("🚀 Menu form script loaded");
     const itemCount = document.querySelector('.item-count');
     const form = document.getElementById('menuForm');
 
     form.addEventListener('submit', e => {
       e.preventDefault();
-      console.log("📝 Form submitted");
 
       const nameInput = document.getElementById('input-name').value.trim();
       const priceInput = document.getElementById('price').value.trim();
@@ -217,13 +212,6 @@ document.addEventListener("DOMContentLoaded", () => {
       const stockInput = document.getElementById('stock').value.trim();
       const stock = stockInput ? parseInt(stockInput) : null;
 
-      console.log("📦 Form values:", {
-        nameInput,
-        priceInput,
-        descriptionInput,
-        imageInput,
-        stock
-      });
 
       if (!nameInput) {
         console.warn("⚠️ No name entered");
@@ -232,11 +220,9 @@ document.addEventListener("DOMContentLoaded", () => {
       }
 
       const mainCourseRef = db.ref('menu/main_course');
-      console.log("🔗 Fetching existing items...");
 
       mainCourseRef.once('value').then(snapshot => {
         const items = snapshot.val() || {};
-        console.log("📁 Existing items in DB:", items);
 
         let foundKey = null;
 
@@ -249,7 +235,6 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         if (foundKey) {
-          console.log(`🛠️ Item "${nameInput}" already exists, updating...`);
           const existingItem = items[foundKey];
 
           const updatedItem = {
@@ -260,7 +245,6 @@ document.addEventListener("DOMContentLoaded", () => {
             stock: stock !== null ? stock : existingItem.stock
           };
 
-          console.log("🔧 Updated item data:", updatedItem);
 
           db.ref('menu/main_course/' + foundKey).update(updatedItem)
             .then(() => {
@@ -275,7 +259,6 @@ document.addEventListener("DOMContentLoaded", () => {
             });
 
         } else {
-          console.log(`🆕 Item "${nameInput}" not found, creating new one...`);
 
           if (!priceInput || !descriptionInput || !imageInput || stock === null) {
             console.warn("⚠️ Missing fields for new item");
@@ -295,14 +278,12 @@ document.addEventListener("DOMContentLoaded", () => {
             filter
           };
 
-          console.log("🆕 New item data:", newItem);
 
           const updates = {};
           updates['/menu/main_course/' + newItemKey] = newItem;
 
           db.ref().update(updates)
             .then(() => {
-              console.log(`✅ Added new item "${nameInput}" to DB`);
               alert('New menu item added!');
               form.reset();
               loadMenu();
@@ -379,10 +360,7 @@ document.addEventListener("DOMContentLoaded", () => {
       });
       
       function fetchAndRenderOrders(mail, admins, courier) {
-        console.log(lastscrollContainer)
         let scrollpos = lastscrollContainer
-        console.log(mail);
-        console.log(admins);
         let currentOrders = 0;
         const ordersRef = db.ref('Orders');
         const ordersList = document.getElementById('orders-list');
@@ -683,9 +661,6 @@ document.addEventListener("DOMContentLoaded", () => {
           setInterval(() => {
             waitForPopupThenCheck(user.email)
           }, 1000);
-          console.log("User:", user.email);
-          console.log("check cancel")
-          console.log("done checking cancel")
         
           menuBtn2.addEventListener("click", () => {
             menuSection.style.display = "grid";
@@ -713,12 +688,10 @@ document.addEventListener("DOMContentLoaded", () => {
             adminBtn.style.display = "flex"; // Show the button if user is admin
           
             adminBtn.addEventListener("click", () => {
-              console.log("showing admin");
               adminSection.style.display = "block";
               orderSection.style.display = "none";
               menuSection.style.display = "none";
               cartSection.style.display = "none";
-              console.log("opening admin");
             });
           }
         });
