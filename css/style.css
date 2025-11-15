@@ -84,17 +84,17 @@
   }
 
   .cancel-order {
-    background: var(--danger-color); /* primary accent */
+    background: var(--danger-color);
     color: #fff;
-    padding: 4px 10px;        /* smaller padding for a compact button */
+    padding: 10px 20px;
     border-radius: 6px;
-    font-size: 0.9rem;        /* smaller text */
+    font-size: 0.9rem;
     font-weight: 600;
     cursor: pointer;
     border: none;
-    display: inline-block;     /* keeps it as a tight button */
+    display: inline-block;
     transition: background 0.2s;
-    margin-left: 6px;          /* spacing from other buttons if needed */
+    margin-left: 6px;
   }
   
   .cancel-order:hover {
