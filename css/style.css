@@ -70,21 +70,17 @@
     background: orange;
     color: var(--text-color);
   }
-   .order-item {
-     position: relative; /* for absolute positioning fallback */
-     display: flex;
-     flex-direction: column;
-     background: var(--card-bg);
-     justify-content: space-between; /* push stuff apart top-to-bottom */
-     padding: 12px;
-     border-radius: 15px; /* rounded corners */
-     margin-bottom: 12px;
-     min-height: 150px; /* just to give some vertical space */
-     box-shadow: rgba(0, 0, 0, 0.12) 0 5px 20px;
+
+  /* Container for admin buttons */
+  .order-item .admin-buttons {
+    display: flex;
+    gap: 6px;      /* space between buttons */
+    margin-top: 6px;
   }
 
-  .cancel-order {
-    background: var(--danger-color);
+  /* Delete button */
+  .order-item .remove-order {
+    background: #f56565; /* red */
     color: #fff;
     padding: 4px 10px;
     border-radius: 6px;
@@ -92,15 +88,30 @@
     font-weight: 600;
     cursor: pointer;
     border: none;
-    display: inline-block;
     transition: background 0.2s;
-    margin-left: 6px;
   }
-  
-  .cancel-order:hover {
-    background: #c53030; /* darker red on hover */
+
+  .order-item .remove-order:hover {
+    background: #c53030;
   }
-  
+
+  /* Cancel button */
+  .order-item .cancel-order {
+    background: var(--danger-color); /* orange-ish or your danger color */
+    color: #fff;
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+    transition: background 0.2s;
+  }
+
+  .order-item .cancel-order:hover {
+    background: #dd6b20; /* darker on hover */
+  }
+
   #orders-list {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
@@ -110,20 +121,7 @@
   .orange-text {
     color: var(--accent-color);
   }
-  .remove-order {
-    align-self: flex-end; /* push button to right */
-    margin-top: auto;     /* push to bottom */
-    background: transparent;
-    border: none;
-    cursor: pointer;
-    padding: 4px;
-    border-radius: 4px;
-    transition: background-color 0.2s ease;
-    color: var(--danger-color); /* red */
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-  }
+
   .remove-order:hover {
     background-color: rgba(224, 0, 0, 0.1);
   }
