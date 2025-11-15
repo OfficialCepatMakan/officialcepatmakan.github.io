@@ -176,6 +176,11 @@ sidePanel.querySelectorAll(".nav-buttons button").forEach(btn => {
 
 document.addEventListener("DOMContentLoaded", () => {
 
+    auth.onAuthStateChanged(user => {
+      if (!user) return;
+      checkMyCancelledOrders(user.email);
+    });
+
      if (navigator.userAgent.match(/Android|BlackBerry|iPhone|iPad|iPod|Opera Mini|IEMobile/i)){
       const scrollBtn = document.getElementById("scroll-btn");
 
