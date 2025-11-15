@@ -463,7 +463,6 @@ document.addEventListener("DOMContentLoaded", () => {
                 ${EmailP}
                 ${courierHTML}
                 ${deleteButtonHTML}
-                ${cancelBtn}
               `;
             
               // append card to DOM
