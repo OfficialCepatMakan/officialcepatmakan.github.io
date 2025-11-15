@@ -49,52 +49,27 @@ function toggleBigButton() {
   }
 }
 
-function checkMyCancelledOrders(userEmail) {
-  const popup = document.getElementById('cancel-popup');
-  const list = document.getElementById('cancelled-orders-list');
-  const closeBtn = document.getElementById('close-popup');
+function checkMyCancelledOrders(userEmail, popup, reasonP, closeBtn) {
+  console.log("starting scan");
 
-  // Make sure all required elements exist
-  if (!popup || !list || !closeBtn) {
-    console.warn("Cancelled orders popup elements not found in DOM");
-    return;
-  }
+  db.ref('Cancelled').orderByChild('mail').equalTo(userEmail)
+    .once('value')
+    .then(snapshot => {
+      const cancelled = snapshot.val();
+      if (!cancelled) return;
 
-  const cancelledRef = db.ref('Cancelled');
-  cancelledRef.once('value', snapshot => {
-    if (!snapshot.exists()) return;
+      // just pick first one for now
+      const firstCancel = Object.values(cancelled)[0];
+      reasonP.textContent = firstCancel.reason || 'No reason provided';
+      popup.classList.remove('hidden');
 
-    const cancelledOrders = [];
-    snapshot.forEach(child => {
-      const order = child.val();
-      if (order.mail === userEmail) {
-        cancelledOrders.push(order);
-      }
-    });
-
-    if (cancelledOrders.length === 0) {
-      popup.style.display = 'none';
-      return
-    };
-
-    // Clear previous list items
-    list.innerHTML = '';
-
-    cancelledOrders.forEach(order => {
-      const li = document.createElement('li');
-      li.textContent = `Your order "${order.name}" was cancelled. Reason: ${order.reason || 'No reason provided'}`;
-      list.appendChild(li);
-    });
-
-    // Show popup
-    popup.style.display = 'flex';
-
-    // Close button handler
-    closeBtn.onclick = () => {
-      popup.style.display = 'none';
-    };
-  });
+      closeBtn.onclick = () => {
+        popup.classList.add('hidden');
+      };
+    })
+    .catch(err => console.error(err));
 }
+
 
 function waitForPopupThenCheck(userEmail) {
   const interval = setInterval(() => {
@@ -102,12 +77,18 @@ function waitForPopupThenCheck(userEmail) {
     const reasonP = document.getElementById('popup-reason');
     const closeBtn = document.getElementById('close-popup');
 
-    if (!popup || !reasonP || !closeBtn) return; // not ready, wait
+    if (!popup || !reasonP || !closeBtn) return; // still not loaded
 
     clearInterval(interval); // found everything, stop waiting
-    checkMyCancelledOrders(userEmail); // now safe
+    checkMyCancelledOrders(userEmail, popup, reasonP, closeBtn); // safe to run
   }, 50);
 }
+
+auth.onAuthStateChanged(user => {
+  if (!user) return;
+  waitForPopupThenCheck(user.email);
+});
+
 
 auth.onAuthStateChanged(user => {
   if (!user) return;
