@@ -58,18 +58,22 @@ function checkMyCancelledOrders(userEmail, popup, reasonP, closeBtn) {
       const cancelled = snapshot.val();
       if (!cancelled) return;
 
-      // just pick first one for now
-      const firstCancel = Object.values(cancelled)[0];
+      // pick first cancelled order
+      const [cancelId, firstCancel] = Object.entries(cancelled)[0];
       reasonP.textContent = firstCancel.reason || 'No reason provided';
       popup.classList.remove('hidden');
 
       closeBtn.onclick = () => {
         popup.classList.add('hidden');
       };
+
+      // remove it from DB after showing
+      db.ref('Cancelled/' + cancelId).remove()
+        .then(() => console.log("Cancelled order removed from DB"))
+        .catch(err => console.error("Failed to remove cancelled order:", err));
     })
     .catch(err => console.error(err));
 }
-
 
 function waitForPopupThenCheck(userEmail) {
   const interval = setInterval(() => {
@@ -155,11 +159,6 @@ sidePanel.querySelectorAll(".nav-buttons button").forEach(btn => {
 
 
 document.addEventListener("DOMContentLoaded", () => {
-
-    auth.onAuthStateChanged(user => {
-      if (!user) return;
-      waitForPopupThenCheck(user.email);
-    });
 
      if (navigator.userAgent.match(/Android|BlackBerry|iPhone|iPad|iPod|Opera Mini|IEMobile/i)){
       const scrollBtn = document.getElementById("scroll-btn");
