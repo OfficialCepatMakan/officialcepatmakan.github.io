@@ -470,19 +470,34 @@ document.addEventListener("DOMContentLoaded", () => {
             
               // attach admin buttons (delete + cancel)
               if (admins.includes(mail)) {
-                // DELETE button (keep your original SVG button)
+                // Create a container for both buttons
+                const adminButtons = document.createElement('div');
+                adminButtons.className = 'admin-buttons';
+              
+                // DELETE button (already in HTML)
                 const deleteBtn = orderDiv.querySelector('.remove-order');
+              
+                // CANCEL button
                 const cancelBtn = document.createElement('button');
                 cancelBtn.className = 'cancel-order';
-                cancelBtn.textContent = 'Cancel Order';
-                orderDiv.appendChild(cancelBtn); // this adds the button to the card
+                cancelBtn.textContent = 'Cancel';
+              
+                // Append them into the container
+                if (deleteBtn) adminButtons.appendChild(deleteBtn);
+                adminButtons.appendChild(cancelBtn);
+              
+                // Append container to the card
+                orderDiv.appendChild(adminButtons);
+              
+                // DELETE logic
                 if (deleteBtn) {
                   deleteBtn.addEventListener('click', () => {
                     if (!confirm("Are you sure you want to delete this order?")) return;
+                  
                     db.ref('Orders/' + orderId).remove()
                       .then(() => {
                         alert("Order deleted successfully.");
-                        fetchAndRenderOrders(mail, admins, courier); // refresh
+                        fetchAndRenderOrders(mail, admins, courier);
                       })
                       .catch((error) => {
                         console.error("Error deleting order:", error);
@@ -490,16 +505,15 @@ document.addEventListener("DOMContentLoaded", () => {
                       });
                   });
                 }
-                
-              // AFTER you set orderDiv.innerHTML
-              if (cancelBtn) {
+              
+                // CANCEL logic
                 cancelBtn.addEventListener('click', () => {
                   if (!confirm("Are you sure you want to cancel this order?")) return;
                 
-                  const orderData = { 
-                    ...order, 
-                    cancelledBy: mail, 
-                    cancelledAt: Date.now() 
+                  const orderData = {
+                    ...order,
+                    cancelledBy: mail,
+                    cancelledAt: Date.now()
                   };
                 
                   db.ref('Cancelled/' + orderId).set(orderData)
@@ -540,7 +554,7 @@ document.addEventListener("DOMContentLoaded", () => {
                   });
                 }
               }
-            }}); // end each order in group
+            }); // end each order in group
           }); // end each dateKey
         
           // admin summary
