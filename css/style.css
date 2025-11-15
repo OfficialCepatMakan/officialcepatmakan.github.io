@@ -136,16 +136,16 @@
     justify-content: center;
   }
   .order-item {
-      position: relative; /* for absolute positioning fallback */
-      display: flex;
-      flex-direction: column;
-      background: var(--card-bg);
-      justify-content: space-between; /* push stuff apart top-to-bottom */
-      padding: 12px;
-      border-radius: 15px; /* rounded corners */
-      margin-bottom: 12px;
-      min-height: 150px; /* just to give some vertical space */
-      box-shadow: rgba(0, 0, 0, 0.12) 0 5px 20px;
+    position: relative; /* for absolute positioning fallback */
+    display: flex;
+    flex-direction: column;
+    background: var(--card-bg);
+    justify-content: space-between; /* push stuff apart top-to-bottom */
+    padding: 12px;
+    border-radius: 15px; /* rounded corners */
+    margin-bottom: 12px;
+    min-height: 150px; /* just to give some vertical space */
+    box-shadow: rgba(0, 0, 0, 0.12) 0 5px 20px;
   }
   .remove-order:hover {
     background-color: rgba(224, 0, 0, 0.1);
