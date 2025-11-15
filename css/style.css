@@ -74,7 +74,7 @@
   /* Container for admin buttons */
   .admin-buttons {
     display: flex;
-    gap: 6px;      /* space between buttons */
+    justify-content: space-between; /* pushes them apart */
     margin-top: 6px;
   }
 
@@ -97,7 +97,8 @@
 
   /* Cancel button */
   .cancel-order {
-    background: var(--danger-color); /* orange-ish or your danger color */
+    margin-left: auto; /* forces it to the right */
+    background: var(--danger-color);
     color: #fff;
     padding: 4px 10px;
     border-radius: 6px;
