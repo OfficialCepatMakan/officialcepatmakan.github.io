@@ -431,6 +431,9 @@ document.addEventListener("DOMContentLoaded", () => {
                   </button>`;
                 
                 EmailP = `<p><strong>Email:</strong> ${order.mail}</p>`;
+                const cancelBtn = document.createElement('button');
+                cancelBtn.className = 'cancel-order';
+                cancelBtn.textContent = 'Cancel Order';
               }
             
               const taken = order.courier && order.courier !== "";
@@ -486,13 +489,8 @@ document.addEventListener("DOMContentLoaded", () => {
                       });
                   });
                 }
-              
-                // CANCEL button (move to "Cancelled" node)
-                const cancelBtn = document.createElement('button');
-                cancelBtn.className = 'cancel-order';
-                cancelBtn.textContent = 'Cancel Order';
-                orderDiv.appendChild(cancelBtn);
-              
+                
+                const cancelBtn = document.querySelector('cancel-order')
                 cancelBtn.addEventListener('click', () => {
                   if (!confirm("Are you sure you want to cancel this order?")) return;
                 
