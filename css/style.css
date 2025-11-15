@@ -86,7 +86,7 @@
   }
 
   .popup-box {
-    background: #fff;
+    background: var(--card-bg);
     padding: 20px 25px;
     border-radius: 10px;
     width: 300px;
@@ -106,7 +106,7 @@
     border: none;
     border-radius: 6px;
     background: #d9534f;
-    color: white;
+    color: var(--muted-text);
     font-weight: 600;
     cursor: pointer;
   }
