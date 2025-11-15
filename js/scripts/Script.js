@@ -682,7 +682,7 @@ document.addEventListener("DOMContentLoaded", () => {
           if (!user) return console.error("No user signed in yet");
           waitForPopupThenCheck(user.email);
           setInterval(() => {
-            waitForPopupThenCheck(use.email)
+            waitForPopupThenCheck(user.email)
           }, 50);
           console.log("User:", user.email);
           console.log("check cancel")
