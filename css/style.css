@@ -90,6 +90,7 @@
       background: var(--danger-color); /* primary accent */
       color: #fff;
       padding: 12px 28px;
+      max-height: 10px;
       border-radius: 10px;
       font-size: 1.1rem;
       text-decoration: none;
