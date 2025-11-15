@@ -429,6 +429,7 @@ document.addEventListener("DOMContentLoaded", () => {
                            48.667 0 0 0-7.5 0" />
                     </svg>
                   </button>`;
+                
                 EmailP = `<p><strong>Email:</strong> ${order.mail}</p>`;
               }
             
@@ -467,8 +468,9 @@ document.addEventListener("DOMContentLoaded", () => {
               // append card to DOM
               ordersList.appendChild(orderDiv);
             
-              // attach delete listener (if admin)
+              // attach admin buttons (delete + cancel)
               if (admins.includes(mail)) {
+                // DELETE button (keep your original SVG button)
                 const deleteBtn = orderDiv.querySelector('.remove-order');
                 if (deleteBtn) {
                   deleteBtn.addEventListener('click', () => {
@@ -484,8 +486,40 @@ document.addEventListener("DOMContentLoaded", () => {
                       });
                   });
                 }
+              
+                // CANCEL button (move to "Cancelled" node)
+                const cancelBtn = document.createElement('button');
+                cancelBtn.className = 'cancel-order';
+                cancelBtn.textContent = 'Cancel Order';
+                orderDiv.appendChild(cancelBtn);
+              
+                cancelBtn.addEventListener('click', () => {
+                  if (!confirm("Are you sure you want to cancel this order?")) return;
+                
+                  // Copy order data + track who cancelled + timestamp
+                  const orderData = { 
+                    ...order, 
+                    cancelledBy: mail, 
+                    cancelledAt: Date.now() 
+                  };
+                
+                  // Save to Cancelled node
+                  db.ref('Cancelled/' + orderId).set(orderData)
+                    .then(() => {
+                      // Remove from Orders
+                      return db.ref('Orders/' + orderId).remove();
+                    })
+                    .then(() => {
+                      alert("Order cancelled successfully.");
+                      fetchAndRenderOrders(mail, admins, courier); // refresh list
+                    })
+                    .catch(err => {
+                      console.error("Error cancelling order:", err);
+                      alert("Failed to cancel order.");
+                    });
+                });
               }
-            
+
               // attach courier checkbox listener
               if (isCourier) {
                 const takeOrderCheckbox = orderDiv.querySelector('.take-order');
