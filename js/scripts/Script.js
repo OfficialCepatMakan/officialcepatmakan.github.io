@@ -49,6 +49,33 @@ function toggleBigButton() {
   }
 }
 
+function checkMyCancelledOrders(mail) {
+  db.ref('Cancelled').once('value')
+    .then(snapshot => {
+      const cancelled = [];
+      snapshot.forEach(child => {
+        const data = child.val();
+        if (data.email === mail) cancelled.push(data);
+      });
+
+      if (cancelled.length > 0) {
+        const last = cancelled[cancelled.length - 1];
+
+        const popup = document.getElementById('cancel-popup');
+        const reason = document.getElementById('popup-reason');
+        const closeBtn = document.getElementById('close-popup');
+
+        reason.textContent = last.cancelReason || "No reason provided.";
+
+        popup.classList.remove('hidden');
+
+        closeBtn.onclick = () => {
+          popup.classList.add('hidden');
+        };
+      }
+    });
+}
+
 menuBtn.addEventListener("click", () => {
   sidePanel.classList.toggle("show");
   menuBtn.classList.toggle("show");
@@ -641,6 +668,7 @@ document.addEventListener("DOMContentLoaded", () => {
         auth.onAuthStateChanged(user => {
           if (!user) return console.error("No user signed in yet");
           console.log("User:", user.email);
+          checkMyCancelledOrders(mail);
         
           menuBtn2.addEventListener("click", () => {
             menuSection.style.display = "grid";
@@ -1107,4 +1135,3 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     });
   }
-
