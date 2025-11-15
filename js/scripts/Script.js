@@ -476,6 +476,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 const cancelBtn = document.createElement('button');
                 cancelBtn.className = 'cancel-order';
                 cancelBtn.textContent = 'Cancel Order';
+                orderDiv.appendChild(cancelBtn); // this adds the button to the card
                 if (deleteBtn) {
                   deleteBtn.addEventListener('click', () => {
                     if (!confirm("Are you sure you want to delete this order?")) return;
