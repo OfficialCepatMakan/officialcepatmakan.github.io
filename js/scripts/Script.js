@@ -49,32 +49,33 @@ function toggleBigButton() {
   }
 }
 
-function checkMyCancelledOrders(mail) {
-  db.ref('Cancelled').once('value')
-    .then(snapshot => {
-      const cancelled = [];
-      snapshot.forEach(child => {
-        const data = child.val();
-        if (data.email === mail) cancelled.push(data);
-      });
-
-      if (cancelled.length > 0) {
-        const last = cancelled[cancelled.length - 1];
-
-        const popup = document.getElementById('cancel-popup');
-        const reason = document.getElementById('popup-reason');
-        const closeBtn = document.getElementById('close-popup');
-
-        reason.textContent = last.cancelReason || "No reason provided.";
-
-        popup.classList.remove('hidden');
-
-        closeBtn.onclick = () => {
-          popup.classList.add('hidden');
-        };
-      }
+function checkMyCancelledOrders(userEmail) {
+  const cancelledRef = db.ref('Cancelled');
+  cancelledRef.once('value', snapshot => {
+    if (!snapshot.exists()) return;
+    const cancelledOrders = [];
+    snapshot.forEach(child => {
+      const order = child.val();
+      if (order.mail === userEmail) cancelledOrders.push(order);
     });
+
+    if (cancelledOrders.length > 0) {
+      const popup = document.getElementById('cancel-popup');
+      const list = document.getElementById('cancelled-orders-list');
+      list.innerHTML = '';
+      cancelledOrders.forEach(order => {
+        const li = document.createElement('li');
+        li.textContent = `Your order "${order.name}" was cancelled. Reason: ${order.reason || 'No reason provided'}`;
+        list.appendChild(li);
+      });
+      popup.style.display = 'flex';
+      document.getElementById('close-popup').addEventListener('click', () => {
+        popup.style.display = 'none';
+      });
+    }
+  });
 }
+
 
 menuBtn.addEventListener("click", () => {
   sidePanel.classList.toggle("show");
