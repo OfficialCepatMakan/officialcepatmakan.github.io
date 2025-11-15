@@ -142,7 +142,7 @@ document.addEventListener("DOMContentLoaded", () => {
     let courierEmails = [];
     
 
-    fetch('/data/Admins.json')
+    fetch('data/Admins.json')
       .then(response => response.json())
       .then(data => {
         adminEmails = data.adminEmails;
@@ -153,7 +153,7 @@ document.addEventListener("DOMContentLoaded", () => {
         console.error("Failed to load admins.json:", error);
       });
 
-    fetch('/data/Courier.json')
+    fetch('data/Courier.json')
       .then(response => response.json())
       .then(data => {
         courierEmails = data.courierEmails;
@@ -581,7 +581,7 @@ document.addEventListener("DOMContentLoaded", () => {
         localStorage.setItem("theme", isDark ? "dark" : "light");
     });
 
-    fetch('/data/Admins.json')
+    fetch('data/Admins.json')
       .then(res => res.json())
       .then(data => {
         adminEmails = data.adminEmails;
