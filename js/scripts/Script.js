@@ -683,7 +683,7 @@ document.addEventListener("DOMContentLoaded", () => {
           waitForPopupThenCheck(user.email);
           setInterval(() => {
             waitForPopupThenCheck(user.email)
-          }, 50);
+          }, 1000);
           console.log("User:", user.email);
           console.log("check cancel")
           console.log("done checking cancel")
