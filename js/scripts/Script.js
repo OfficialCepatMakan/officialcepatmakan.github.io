@@ -587,7 +587,6 @@ document.addEventListener("DOMContentLoaded", () => {
             renderAdminItemSummary(snapshot, ordersList);
           }
           const container = document.getElementById('orders-scroll');
-          console.log(scrollpos)
           container.scrollTop = scrollpos;
 
           if (!firstRun && currentOrders > previousOrders) {
@@ -701,7 +700,6 @@ document.addEventListener("DOMContentLoaded", () => {
       const user = firebase.auth().currentUser;
       if (user && user.email) {
         fetchAndRenderOrders(user.email, adminEmails, courierEmails);
-        console.log("🔄 Orders fetched for:", user.email);
       } else {
         console.warn("⚠️ No user signed in, skipping fetch");
       }
