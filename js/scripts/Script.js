@@ -50,6 +50,18 @@ function toggleBigButton() {
 }
 
 function checkMyCancelledOrders(userEmail) {
+  const popup = document.getElementById('cancel-popup');
+  const list = document.getElementById('cancelled-orders-list');
+  const closeBtn = document.getElementById('close-popup');
+
+  console.log("starting scan")
+
+  // Make sure all required elements exist
+  if (!popup || !list || !closeBtn) {
+    console.warn("Cancelled orders popup elements not found in DOM");
+    return;
+  }
+
   const cancelledRef = db.ref('Cancelled');
   cancelledRef.once('value', snapshot => {
     if (!snapshot.exists()) return;
@@ -57,28 +69,39 @@ function checkMyCancelledOrders(userEmail) {
     const cancelledOrders = [];
     snapshot.forEach(child => {
       const order = child.val();
-      if (order.mail === userEmail) cancelledOrders.push(order);
+      if (order.mail === userEmail) {
+        cancelledOrders.push(order);
+      }
     });
 
-    if (cancelledOrders.length > 0) {
-      const popup = document.getElementById('cancel-popup');
-      const list = document.getElementById('cancelled-orders-list');
-      list.innerHTML = '';
-      cancelledOrders.forEach(order => {
-        const li = document.createElement('li');
-        li.textContent = `Your order "${order.name}" was cancelled. Reason: ${order.reason || 'No reason provided'}`;
-        list.appendChild(li);
-      });
+    if (cancelledOrders.length === 0) return;
 
-      popup.style.display = 'flex';
+    // Clear previous list items
+    list.innerHTML = '';
 
-      document.getElementById('close-popup').addEventListener('click', () => {
-        popup.style.display = 'none';
-      });
-    }
+    cancelledOrders.forEach(order => {
+      const li = document.createElement('li');
+      li.textContent = `Your order "${order.name}" was cancelled. Reason: ${order.reason || 'No reason provided'}`;
+      list.appendChild(li);
+    });
+
+    // Show popup
+    popup.style.display = 'flex';
+
+    // Close button handler
+    closeBtn.onclick = () => {
+      popup.style.display = 'none';
+    };
   });
 }
 
+// Safe initialization on DOMContentLoaded
+document.addEventListener('DOMContentLoaded', () => {
+  auth.onAuthStateChanged(user => {
+    if (!user) return;
+    checkMyCancelledOrders(user.email);
+  });
+});
 
 
 menuBtn.addEventListener("click", () => {
