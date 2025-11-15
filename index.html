@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "Organization",
+            "@id": "https://cepatmakan.web.id#organization",
+            "name": "CepatMakan",
+            "url": "https://cepatmakan.web.id",
+            "logo": {
+              "@type": "ImageObject",
+              "url": "https://cepatmakan.web.id/logo.png"
+            },
+            "sameAs": [
+              "https://instagram.com/cepatmakan",
+              "https://www.youtube.com/@arfadoesblender"
+            ],
+            "description": "Nizamia's new way to eat — created by students to make dining easier, faster, and smarter for everyone."
+          },
+          {
+            "@type": "WebSite",
+            "@id": "https://cepatmakan.web.id#website",
+            "url": "https://cepatmakan.web.id",
+            "name": "CepatMakan",
+            "publisher": {
+              "@id": "https://cepatmakan.web.id#organization"
+            }
+          }
+        ]
+      }
+    </script>
+    <title>CepatMakan - Food Ordering System</title>
+    <meta name="description" content="Nizamia's new way to eat — created by students to make dining easier, faster, and smarter for everyone.">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <meta name="theme-color" content="#ffb703">
+    <meta property="og:url" content="https://cepatmakan.web.id">
+    <meta property="og:image" content="https://cepatmakan.web.id/RenderedScreen.png">
+    <meta property="og:title" content="CepatMakan - Food Ordering System">
+    <meta property="og:description" content="Nizamia's new way to eat — created by students to make dining easier, faster, and smarter for everyone.">
+    <meta property="og:type" content="website">
+
+    <meta property="twitter:card" content="summary_large_image" />
+    <meta property="twitter:url" content="https://cepatmakan.web.id/" />
+    <meta property="twitter:title" content="CepatMakan - Food Ordering System" />
+    <meta property="twitter:description" content="Nizamia's new way to eat — created by students to make dining easier, faster, and smarter for everyone." />
+    <meta property="twitter:image" content="https://cepatmakan.web.id/RenderedScreen.png" />
+    
+    <link rel="icon" href="https://cepatmakan.web.id/logo.png" type="image/png">
+    <link rel="apple-touch-icon" href="https://cepatmakan.web.id/logo.png">
+    <link rel="shortcut icon" href="https://cepatmakan.web.id/logo.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+    <!-- Header -->
+    <header class="header">
+      
+      <div class="header-content">
+          <div class="logo-section">
+                <img src="assets/images/Logo_text.png" alt="Cepatmakan text" style="width: 150px;">
+          </div>
+          <div class="header-info">
+                  <div id="authContainer">
+                    <button class="googleSignInBtn" id="googleSignInBtn">
+                      <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google" />
+                      Sign in with Google
+                    </button>
+                  </div>
+              </div>
+          </div>
+      </div>
+      <button id="menu-button" class="menu-btn">⋮</button>
+      <div id="side-panel" class="side-panel">
+        <div class="nav-buttons">
+          <button data-section="home" id="btn-menu">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" style="width: 20px; height: 20px;">
+              <path stroke-linecap="round" stroke-linejoin="round" d="m2.25 12 8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25" />
+            </svg>
+            <p>Home</p>
+          </button>
+          <button data-section="cart" id="btn-cart">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" style="width: 20px; height: 20px;">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 0 0-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 0 0-16.536-1.84M7.5 14.25 5.106 5.272M6 20.25a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Zm12.75 0a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Z" />
+            </svg>
+            <p>Cart</p>
+          </button>
+          <button data-section="orders" id="btn-order">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" style="width: 20px; height: 20px;">
+              <path stroke-linecap="round" stroke-linejoin="round" d="m20.25 7.5-.625 10.632a2.25 2.25 0 0 1-2.247 2.118H6.622a2.25 2.25 0 0 1-2.247-2.118L3.75 7.5M10 11.25h4M3.375 7.5h17.25c.621 0 1.125-.504 1.125-1.125v-1.5c0-.621-.504-1.125-1.125-1.125H3.375c-.621 0-1.125.504-1.125 1.125v1.5c0 .621.504 1.125 1.125 1.125Z" />
+            </svg>
+            <p>Orders</p>
+          </button>
+          <button data-section="admin" id="btn-admin" style="display: none;">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" style="width: 20px; height: 20px;">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 3v1.5M4.5 8.25H3m18 0h-1.5M4.5 12H3m18 0h-1.5m-15 3.75H3m18 0h-1.5M8.25 19.5V21M12 3v1.5m0 15V21m3.75-18v1.5m0 15V21m-9-1.5h10.5a2.25 2.25 0 0 0 2.25-2.25V6.75a2.25 2.25 0 0 0-2.25-2.25H6.75A2.25 2.25 0 0 0 4.5 6.75v10.5a2.25 2.25 0 0 0 2.25 2.25Zm.75-12h9v9h-9v-9Z" />
+            </svg>
+            <p>Admin</p>
+          </button>
+          
+          <button data-section="logout" id="btn-logout">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" style="width: 20px; height: 20px;">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 9V5.25A2.25 2.25 0 0 1 10.5 3h6a2.25 2.25 0 0 1 2.25 2.25v13.5A2.25 2.25 0 0 1 16.5 21h-6a2.25 2.25 0 0 1-2.25-2.25V15m-3 0-3-3m0 0 3-3m-3 3H15" />
+            </svg>
+          </button>
+        </div>
+      </div>
+    </header>
+    <button id="scroll-btn" class="scroll-btn">Back to Top</button>
+    <button id="big-bg-btn"></button>
+    <div id="home-section">
+      <div class="hero">
+        <div class="hero-content">
+          <h1><span class="highlight">Cepat</span>Makan</h1>
+          <p>Nizamia's new way to eat</p>
+          <a href="#menu-section" class="hero-btn" style="max-width: 150px;">Order Now</a>
+          <a href="/pages/ReturnPolicy.html" style="color: rgba(100, 100, 100, 0.516); margin-top: 5px;"><p>Return Policy</p></a>
+        </div>
+      </div>
+    </div>
+
+    <div class="main-content">
+      <!-- Menu Section -->
+      <section class="menu-section" id="menu-section">
+        <div class="menu-filters-wrapper">
+         <h1 style="text-align: center; padding-top: 10px;">Our Originals</h1>
+          
+         <!-- Filter Bar -->
+         <div class="menu-filters">
+           <button class="filter-btn active" data-filter="all">All</button>
+           <button class="filter-btn" data-filter="food">Food</button>
+           <button class="filter-btn" data-filter="drink">Drinks</button>
+         </div>
+        </div>
+      
+        <!-- Main Course -->
+        <div class="category-section">
+          <div class="category-header">
+          </div>
+          <div class="menu-grid">
+            <!-- This Section Will Be Full Once The Products Are Loaded -->
+          </div>
+        </div>
+      </section>
+    </div>
+
+
+    <aside class="cart-section" id="cart-section" style="display: none;">
+        <!-- Cart Section -->
+        <aside class="cart-section">
+            <div class="cart-card">
+                <div class="cart-header">
+                    <h3 class="cart-title">Your Order</h3>
+                    <span class="cart-count">0</span>
+                </div>
+                <div class="cart-content">
+                    <div class="empty-cart">
+                        <p>Your cart is empty</p>
+                    </div>
+
+                    <!-- This section would be populated when items are added -->
+                    <div class="cart-items" style="display: none;">
+                        <div class="cart-item">
+                            <div class="item-info">
+                                <h4>Sample Item</h4>
+                                <p>Rp 15,000 × 1</p>
+                            </div>
+                            <div class="item-controls">
+                                <button class="qty-btn">−</button>
+                                <span>1</span>
+                                <button class="qty-btn">+</button>
+                            </div>
+                            <span>Rp 15,000</span>
+                        </div>
+                    </div>
+
+                    <div class="separator"></div>
+
+                    <div class="form-section">
+                        <div class="form-grid">
+                            <div class="form-group">
+                              <label class="form-label">Grade <label class="orange-text">*</label></label>
+                              <select class="form-select" id="grade">
+                                <option value="">Select Grade</option>
+                                <option value="7">Grade 7</option>
+                                <option value="8">Grade 8</option>
+                                <option value="9">Grade 9</option>
+                                <option value="Others">Others (eg. teacher)</option>
+                              </select>
+                            </div>
+                            
+                            <div class="form-group" id="class-group">
+                              <label class="form-label">Class <label class="orange-text">*</label></label>
+                              <select class="form-select" id="class">
+                                <option value="">Select Class</option>
+                                <option value="A">Class A</option>
+                                <option value="B">Class B</option>
+                                <option value="C">Class C</option>
+                                <option value="D">Class D</option>
+                                <option value="E">Class E</option>
+                                <option value="F">Class F</option>
+                                <option value="G">Class G</option>
+                                <option value="H">Class H</option>
+                              </select>
+                            </div>
+                            
+                            <div class="form-group" id="others-group" style="display:none;">
+                              <label class="form-label">Location <label class="orange-text">*</label></label>
+                              <select class="form-select" id="location">
+                                <option value="">Select Location</option>
+                                <option value="ruang-guru">Ruang Guru</option>
+                                <option value="auditorium">Auditorium</option>
+                                <option value="kantin">Kantin</option>
+                                <option value="perpustakaan">Perpustakaan</option>
+                              </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label">Payment methods <label class="orange-text">*</label></label>
+                                <select class="form-select" id="paymentmethod">
+                                    <option value="Cash">Cash</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Name <label class="orange-text">*</label></label>
+                            <textarea class="form-textarea" id="name" maxlength="25" placeholder="Put your name here"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Notes</label>
+                            <textarea class="form-textarea" id="Notes" placeholder="Put notes here (eg. more sauce)"></textarea>
+                        </div>
+                    </div>
+
+                    <div class="separator"></div>
+
+                    <div class="total-section">
+                        <span>Total:</span>
+                        <span class="total-price">Rp 0</span>
+                    </div>
+
+                    <div class="separator"></div>
+
+                    <button class="order-btn" id="order-btn" disabled>Place Order</button>
+                </div>
+            </div>
+        </aside>
+    </aside>
+    <aside class="orders-section" id="orders-section" style="display: none;">
+        <h2>Placed Orders</h2>
+        <div id="orders-scroll">
+          <div id="orders-list">Loading orders...</div>
+        </div>
+    </aside>
+
+    <aside class="admin-section" id="admin-section" style="display: none;">
+      <section class="add-section">
+      <form id="menuForm">
+        <h2>Add Menu Item</h2>
+        <label>Name:
+          <input type="text" id="input-name" required />
+        </label>
+        <label>Price (number):
+          <input type="number" id="price" />
+        </label>
+        <label>Description:
+          <input type="text" id="description" />
+        </label>
+        <label>Image URL:
+          <input type="text" id="image" />
+        </label>
+        <label>Stock:
+          <input type="number" id="stock" >
+        </label>
+        <label>Filter:
+          <select id="filterdropdown" name="filterdropdown">
+            <option value="food">Food</option>
+            <option value="drink">Drink</option>
+          </select>
+        </label>
+        <button type="submit">Add to DB</button>
+      </form>
+      </section>
+    </aside>
+
+    <button id="dark-toggle">
+        <span id="dark-icon"></span>
+    </button>
+    
+</body>
+<script src="https://www.gstatic.com/firebasejs/11.10.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/11.10.0/firebase-database-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/11.10.0/firebase-analytics-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/11.10.0/firebase-auth-compat.js"></script>
+<script src="js/scripts/firebase-config.js"></script>
+<script src="js/scripts/Script.js"></script>
+</html>
