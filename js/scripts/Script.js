@@ -506,27 +506,35 @@ document.addEventListener("DOMContentLoaded", () => {
                   });
                 }
               
-                // CANCEL logic
-                cancelBtn.addEventListener('click', () => {
-                  if (!confirm("Are you sure you want to cancel this order?")) return;
-                
-                  const orderData = {
-                    ...order,
-                    cancelledBy: mail,
-                    cancelledAt: Date.now()
-                  };
-                
-                  db.ref('Cancelled/' + orderId).set(orderData)
-                    .then(() => db.ref('Orders/' + orderId).remove())
-                    .then(() => {
-                      alert("Order cancelled successfully.");
-                      fetchAndRenderOrders(mail, admins, courier);
-                    })
-                    .catch(err => {
-                      console.error("Error cancelling order:", err);
-                      alert("Failed to cancel order.");
-                    });
-                });
+                if (cancelBtn) {
+                  cancelBtn.addEventListener('click', () => {
+                    if (!confirm("Are you sure you want to cancel this order?")) return;
+                  
+                    const reason = prompt("Why are you cancelling this order?");
+                    if (!reason || reason.trim() === "") {
+                      alert("Cancellation aborted. Reason required.");
+                      return;
+                    }
+                  
+                    const orderData = { 
+                      ...order, 
+                      cancelledBy: mail,
+                      cancelledAt: Date.now(),
+                      reason: reason.trim()
+                    };
+                  
+                    db.ref('Cancelled/' + orderId).set(orderData)
+                      .then(() => db.ref('Orders/' + orderId).remove())
+                      .then(() => {
+                        alert("Order cancelled successfully.");
+                        fetchAndRenderOrders(mail, admins, courier);
+                      })
+                      .catch(err => {
+                        console.error("Error cancelling order:", err);
+                        alert("Failed to cancel order.");
+                      });
+                  });
+                }
               }
               
               // attach courier checkbox listener
