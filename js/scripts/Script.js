@@ -54,8 +54,6 @@ function checkMyCancelledOrders(userEmail) {
   const list = document.getElementById('cancelled-orders-list');
   const closeBtn = document.getElementById('close-popup');
 
-  console.log("starting scan")
-
   // Make sure all required elements exist
   if (!popup || !list || !closeBtn) {
     console.warn("Cancelled orders popup elements not found in DOM");
@@ -74,7 +72,10 @@ function checkMyCancelledOrders(userEmail) {
       }
     });
 
-    if (cancelledOrders.length === 0) return;
+    if (cancelledOrders.length === 0) {
+      popup.style.display = 'none';
+      return
+    };
 
     // Clear previous list items
     list.innerHTML = '';
