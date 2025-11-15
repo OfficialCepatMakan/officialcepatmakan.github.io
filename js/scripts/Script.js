@@ -49,52 +49,23 @@ function toggleBigButton() {
   }
 }
 
-function checkMyCancelledOrders(userEmail) {
-  const popup = document.getElementById('cancel-popup');
-  const list = document.getElementById('cancelled-orders-list');
-  const closeBtn = document.getElementById('close-popup');
+function waitForPopupThenCheck(userEmail) {
+  const interval = setInterval(() => {
+    const popup = document.getElementById('cancel-popup');
+    const reasonP = document.getElementById('popup-reason');
+    const closeBtn = document.getElementById('close-popup');
 
-  // Make sure all required elements exist
-  if (!popup || !list || !closeBtn) {
-    console.warn("Cancelled orders popup elements not found in DOM");
-    return;
-  }
+    if (!popup || !reasonP || !closeBtn) return; // not ready, wait
 
-  const cancelledRef = db.ref('Cancelled');
-  cancelledRef.once('value', snapshot => {
-    if (!snapshot.exists()) return;
-
-    const cancelledOrders = [];
-    snapshot.forEach(child => {
-      const order = child.val();
-      if (order.mail === userEmail) {
-        cancelledOrders.push(order);
-      }
-    });
-
-    if (cancelledOrders.length === 0) {
-      popup.style.display = 'none';
-      return
-    };
-
-    // Clear previous list items
-    list.innerHTML = '';
-
-    cancelledOrders.forEach(order => {
-      const li = document.createElement('li');
-      li.textContent = `Your order "${order.name}" was cancelled. Reason: ${order.reason || 'No reason provided'}`;
-      list.appendChild(li);
-    });
-
-    // Show popup
-    popup.style.display = 'flex';
-
-    // Close button handler
-    closeBtn.onclick = () => {
-      popup.style.display = 'none';
-    };
-  });
+    clearInterval(interval); // found everything, stop waiting
+    checkMyCancelledOrders(userEmail); // now safe
+  }, 50);
 }
+
+auth.onAuthStateChanged(user => {
+  if (!user) return;
+  waitForPopupThenCheck(user.email);
+});
 
 // Safe initialization on DOMContentLoaded
 document.addEventListener('DOMContentLoaded', () => {
