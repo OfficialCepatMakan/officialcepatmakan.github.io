@@ -274,6 +274,12 @@
   #orders-scroll {
     height: 95vh;
     overflow-y: auto;
+    scrollbar-width: none; /* for Firefox */
+    -ms-overflow-style: none; /* for IE/Edge */
+  }
+
+  #orders-scroll::-webkit-scrollbar {
+    display: none; /* for Chrome, Safari, Opera */
   }
   .hero-content h1 {
     font-size: 3.5rem;
