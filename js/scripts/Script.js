@@ -716,51 +716,55 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     auth.onAuthStateChanged((user) => {
-      waitForPopupThenCheck(user.email);
-      if (user) {
-        console.log("User signed in:", user.displayName);
-
-        // Clear container first
-        authContainer.innerHTML = "";
-
-        // Create profile pic element
-        const profilePic = document.createElement("img");
-        profilePic.src = user.photoURL || "https://via.placeholder.com/32";
-        profilePic.alt = user.displayName;
-        profilePic.title = user.displayName;
-        profilePic.style.width = "32px";
-        profilePic.style.height = "32px";
-        profilePic.style.borderRadius = "50%";
-        profilePic.style.objectFit = "cover";
-        profilePic.style.cursor = "pointer";
-        profilePic.style.boxShadow = "0 2px 6px rgba(0,0,0,0.2)";
-        profilePic.classList.add("googleProfile");
-
-        authContainer.appendChild(profilePic);
-
-      } else {
-        // User not signed in — restore the button
+      // NOT LOGGED IN
+      if (!user) {
+        console.log("No user signed in");
+      
         authContainer.innerHTML = `
           <button class="googleSignInBtn" id="googleSignInBtn">
             <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google" />
             Sign in with Google
           </button>
         `;
-
-        // Re-attach event listener on the new button
+      
         const signInBtn = document.getElementById("googleSignInBtn");
-        signInBtn.addEventListener("click", () => {
-          auth.signInWithPopup(provider)
-            .then((result) => {
-              console.log("Signed in as", result.user.displayName);
-              user = result.user.displayName
-            })
-            .catch((error) => {
-              console.error("Error during sign-in:", error.message);
-            });
-        });
+        if (signInBtn) {
+          signInBtn.addEventListener("click", () => {
+            auth.signInWithPopup(provider)
+              .then((result) => {
+                console.log("Signed in as", result.user.displayName);
+                // DON'T overwrite user
+              })
+              .catch((error) => {
+                console.error("Error during sign-in:", error.message);
+              });
+          });
+        }
+      
+        return; // IMPORTANT: stop here
       }
-    });
+    
+      // LOGGED IN
+      waitForPopupThenCheck(user.email);
+    
+      console.log("User signed in:", user.displayName);
+    
+      authContainer.innerHTML = "";
+    
+      const profilePic = document.createElement("img");
+      profilePic.src = user.photoURL || "https://via.placeholder.com/32";
+      profilePic.alt = user.displayName;
+      profilePic.title = user.displayName;
+      profilePic.style.width = "32px";
+      profilePic.style.height = "32px";
+      profilePic.style.borderRadius = "50%";
+      profilePic.style.objectFit = "cover";
+      profilePic.style.cursor = "pointer";
+      profilePic.style.boxShadow = "0 2px 6px rgba(0,0,0,0.2)";
+      profilePic.classList.add("googleProfile");
+    
+      authContainer.appendChild(profilePic);
+    }); 
   });  
   
   function loadMenu(filter) {
