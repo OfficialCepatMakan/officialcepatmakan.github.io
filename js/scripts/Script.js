@@ -660,6 +660,10 @@ document.addEventListener("DOMContentLoaded", () => {
           }, 1000);
         
           menuBtn2.addEventListener("click", () => {
+            if (!user) {
+              alert("Log In To Order!")
+              return
+            }
             menuSection.style.display = "grid";
             cartSection.style.display = "none";
             orderSection.style.display = "none";
