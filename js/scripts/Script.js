@@ -141,6 +141,19 @@ filterBtns.forEach(btn => {
   });
 });
 
+sidePanel.querySelectorAll(".nav-buttons button").forEach(btn => {
+  if (btn.id === "btn-logout") return; // skip logout button
+
+  btn.addEventListener("click", () => {
+    const section = btn.getAttribute("data-section");
+    menuBtn3.classList.remove("has-notification");
+    btnCart.classList.remove("has-notification");
+
+    hideAllSections();
+  });
+});
+
+
 document.addEventListener("DOMContentLoaded", () => {
 
      if (navigator.userAgent.match(/Android|BlackBerry|iPhone|iPad|iPod|Opera Mini|IEMobile/i)){
