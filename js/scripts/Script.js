@@ -23,6 +23,13 @@ let previousOrders = 0;
 let firstRun = true;
 loadMenu("all");
 
+cartBtn.addEventListener("click", () => {
+  alert("Log in to order!")
+});
+orderBtn.addEventListener("click", () => {
+  alert("Log in to order!")
+});
+
 gradeSelect.addEventListener("change", function () {
   if (this.value === "Others") {
     classGroup.style.display = "none";
