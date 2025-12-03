@@ -34,7 +34,6 @@ gradeSelect.addEventListener("change", function () {
 });
 
 const sections = {
-  home: [document.getElementById("menu-section")],
   cart: [document.getElementById("cart-section")],
   orders: [document.getElementById("orders-section")],
   admin: [document.getElementById("admin-section")]
