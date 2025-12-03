@@ -23,13 +23,6 @@ let previousOrders = 0;
 let firstRun = true;
 loadMenu("all");
 
-cartBtn.addEventListener("click", () => {
-  alert("Log in to order!")
-});
-orderBtn.addEventListener("click", () => {
-  alert("Log in to order!")
-});
-
 gradeSelect.addEventListener("change", function () {
   if (this.value === "Others") {
     classGroup.style.display = "none";
@@ -676,6 +669,10 @@ document.addEventListener("DOMContentLoaded", () => {
           });
         
           cartBtn.addEventListener("click", () => {
+            if (!user){
+              alert("Log in to order!")
+              return
+            }
             menuSection.style.display = "none";
             cartSection.style.display = "block";
             orderSection.style.display = "none";
@@ -683,6 +680,10 @@ document.addEventListener("DOMContentLoaded", () => {
           });
         
           orderBtn.addEventListener("click", () => {
+            if (!user){
+              alert("Log in to order!")
+              return
+            }
             orderSection.style.display = "block";
             fetchAndRenderOrders(user.email, adminEmails, courierEmails);
             menuSection.style.display = "none";
