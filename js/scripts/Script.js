@@ -646,84 +646,127 @@ document.addEventListener("DOMContentLoaded", () => {
         localStorage.setItem("theme", isDark ? "dark" : "light");
     });
 
+    // --- 1. Global State Variables ---
+    let currentUser = null;
+    let popupInterval = null; // To manage the popup timer
+
+    // --- 2. Load Configuration Data ---
     fetch('data/Admins.json')
       .then(res => res.json())
       .then(data => {
         adminEmails = data.adminEmails;
         console.log("Loaded admin emails:", adminEmails);
-      
-        auth.onAuthStateChanged(user => {
-          if (!user) return console.error("No user signed in yet");
-          waitForPopupThenCheck(user.email);
-          setInterval(() => {
-            waitForPopupThenCheck(user.email)
-          }, 1000);
-        
-          menuBtn2.addEventListener("click", () => {
-            if (!user) {
-              alert("Log In To Order!")
-              return
-            }
-            menuSection.style.display = "grid";
-            cartSection.style.display = "none";
-            orderSection.style.display = "none";
-            adminSection.style.display = "none";
-          });
-        
-          cartBtn.addEventListener("click", () => {
-            if (!user){
-              alert("Log in to order!")
-              return
-            }
-            menuSection.style.display = "none";
-            cartSection.style.display = "block";
-            orderSection.style.display = "none";
-            adminSection.style.display = "none";
-          });
-        
-          orderBtn.addEventListener("click", () => {
-            if (!user){
-              alert("Log in to order!")
-              return
-            }
-            orderSection.style.display = "block";
-            fetchAndRenderOrders(user.email, adminEmails, courierEmails);
-            menuSection.style.display = "none";
-            cartSection.style.display = "none";
-            adminSection.style.display = "none";
-          });
-        
-          if (adminEmails.includes(user.email)) {
-            adminBtn.style.display = "flex"; // Show the button if user is admin
-          
-            adminBtn.addEventListener("click", () => {
-              adminSection.style.display = "block";
-              orderSection.style.display = "none";
-              menuSection.style.display = "none";
-              cartSection.style.display = "none";
-            });
-          }
-        });
+        // Determine if we need to update UI based on new data immediately
+        if (currentUser) updateAdminUI(currentUser); 
       })
       .catch(err => console.error("Failed to load admins.json:", err));
-    setInterval(() => {
-      const user = firebase.auth().currentUser;
-      if (user && user.email) {
-        fetchAndRenderOrders(user.email, adminEmails, courierEmails);
+    
+    // --- 3. Auth State Listener ---
+    auth.onAuthStateChanged(user => {
+      currentUser = user; // Update global user
+    
+      if (!user) {
+        console.log("User signed out");
+        // Hide Admin button immediately on logout
+        if (adminBtn) adminBtn.style.display = "none";
+        // Stop the popup checker if user logs out
+        if (popupInterval) clearInterval(popupInterval);
+        return;
+      }
+    
+      // User is logged in
+      updateAdminUI(user);
+
+      // Handle the Popup Checker (Managed Interval)
+      if (popupInterval) clearInterval(popupInterval); // Clear existing before starting new
+      waitForPopupThenCheck(user.email); // Run once immediately
+      popupInterval = setInterval(() => {
+        waitForPopupThenCheck(user.email);
+      }, 1000);
+    });
+
+    // Helper to show/hide admin button
+    function updateAdminUI(user) {
+      if (adminEmails.includes(user.email)) {
+        adminBtn.style.display = "flex";
       } else {
-        console.warn("⚠️ No user signed in, skipping fetch");
+        adminBtn.style.display = "none";
+      }
+    }
+
+    // --- 4. Event Listeners (DEFINED ONCE - OUTSIDE AUTH) ---
+
+    // Helper for access control
+    function requireAuth() {
+      if (!currentUser) {
+        alert("Log In To Order!");
+        return false;
+      }
+      return true;
+    }
+
+    menuBtn2.addEventListener("click", () => {
+      if (!requireAuth()) return;
+
+      menuSection.style.display = "grid";
+      cartSection.style.display = "none";
+      orderSection.style.display = "none";
+      adminSection.style.display = "none";
+    });
+
+    cartBtn.addEventListener("click", () => {
+      if (!requireAuth()) return;
+    
+      menuSection.style.display = "none";
+      cartSection.style.display = "block";
+      orderSection.style.display = "none";
+      adminSection.style.display = "none";
+    });
+
+    orderBtn.addEventListener("click", () => {
+      if (!requireAuth()) return;
+    
+      orderSection.style.display = "block";
+      // Safe check for courierEmails
+      fetchAndRenderOrders(currentUser.email, adminEmails, courierEmails || []); 
+      menuSection.style.display = "none";
+      cartSection.style.display = "none";
+      adminSection.style.display = "none";
+    });
+
+    adminBtn.addEventListener("click", () => {
+      // Security check: even if button is hacked visible, check logic again
+      if (!currentUser || !adminEmails.includes(currentUser.email)) return;
+    
+      adminSection.style.display = "block";
+      orderSection.style.display = "none";
+      menuSection.style.display = "none";
+      cartSection.style.display = "none";
+    });
+
+    logoutbtn.addEventListener("click", () => {
+      auth.signOut()
+        .then(() => {
+          console.log("User signed out.");
+          alert("User signed out");
+          // UI Reset can go here (optional, depending on your app flow)
+          menuSection.style.display = "grid"; // or whatever your default is
+        })
+        .catch((error) => console.error("Error during sign-out:", error.message));
+    });
+
+    // --- 5. Global Order Fetcher Loop ---
+    setInterval(() => {
+      // Use the global currentUser variable instead of querying firebase.auth() again
+      if (currentUser && currentUser.email) {
+        // Only fetch if adminEmails are actually loaded to prevent errors
+        if (adminEmails.length > 0) {
+          fetchAndRenderOrders(currentUser.email, adminEmails, courierEmails || []);
+        }
+      } else {
+        // console.warn("Skipping fetch - no user"); // Commented out to reduce console noise
       }
     }, 5000);
-    logoutbtn.addEventListener("click", () => {
-    auth.signOut()
-      .then(() => {
-        console.log("User signed out.");
-        alert("user signed out")
-      })
-      .catch((error) => {
-        console.error("Error during sign-out:", error.message);
-      });
-    });
 
     auth.onAuthStateChanged((user) => {
       // NOT LOGGED IN
