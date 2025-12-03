@@ -270,6 +270,7 @@
     text-align: center;
     color: var(--text-color);
     padding: 20px;
+    width: 100vw;
   }
   #orders-scroll {
     height: 95vh;
@@ -681,7 +682,7 @@
     gap: var(--gap);
     padding: 1rem;
     box-sizing: border-box;
-    width: 95vw;
+    width: 100vw;
     max-width: 1600px;
     margin-inline: auto;
     justify-content: center;
