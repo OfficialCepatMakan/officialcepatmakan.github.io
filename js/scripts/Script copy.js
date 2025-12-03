@@ -646,24 +646,30 @@ document.addEventListener("DOMContentLoaded", () => {
         localStorage.setItem("theme", isDark ? "dark" : "light");
     });
 
+    // --- 1. Global State Variables ---
     let currentUser = null;
-    let popupInterval = null;
+    let popupInterval = null; // To manage the popup timer
 
+    // --- 2. Load Configuration Data ---
     fetch('data/Admins.json')
       .then(res => res.json())
       .then(data => {
         adminEmails = data.adminEmails;
         console.log("Loaded admin emails:", adminEmails);
+        // Determine if we need to update UI based on new data immediately
         if (currentUser) updateAdminUI(currentUser); 
       })
       .catch(err => console.error("Failed to load admins.json:", err));
     
+    // --- 3. Auth State Listener ---
     auth.onAuthStateChanged(user => {
-      currentUser = user;
+      currentUser = user; // Update global user
     
       if (!user) {
         console.log("User signed out");
+        // Hide Admin button immediately on logout
         if (adminBtn) adminBtn.style.display = "none";
+        // Stop the popup checker if user logs out
         if (popupInterval) clearInterval(popupInterval);
         return;
       }
@@ -672,8 +678,8 @@ document.addEventListener("DOMContentLoaded", () => {
       updateAdminUI(user);
 
       // Handle the Popup Checker (Managed Interval)
-      if (popupInterval) clearInterval(popupInterval);
-      waitForPopupThenCheck(user.email);
+      if (popupInterval) clearInterval(popupInterval); // Clear existing before starting new
+      waitForPopupThenCheck(user.email); // Run once immediately
       popupInterval = setInterval(() => {
         waitForPopupThenCheck(user.email);
       }, 1000);
@@ -688,6 +694,9 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     }
 
+    // --- 4. Event Listeners (DEFINED ONCE - OUTSIDE AUTH) ---
+
+    // Helper for access control
     function requireAuth() {
       if (!currentUser) {
         alert("Log In To Order!");
@@ -718,6 +727,7 @@ document.addEventListener("DOMContentLoaded", () => {
       if (!requireAuth()) return;
     
       orderSection.style.display = "block";
+      // Safe check for courierEmails
       fetchAndRenderOrders(currentUser.email, adminEmails, courierEmails || []); 
       menuSection.style.display = "none";
       cartSection.style.display = "none";
@@ -725,6 +735,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     adminBtn.addEventListener("click", () => {
+      // Security check: even if button is hacked visible, check logic again
       if (!currentUser || !adminEmails.includes(currentUser.email)) return;
     
       adminSection.style.display = "block";
@@ -738,17 +749,22 @@ document.addEventListener("DOMContentLoaded", () => {
         .then(() => {
           console.log("User signed out.");
           alert("User signed out");
-          menuSection.style.display = "grid";
+          // UI Reset can go here (optional, depending on your app flow)
+          menuSection.style.display = "grid"; // or whatever your default is
         })
         .catch((error) => console.error("Error during sign-out:", error.message));
     });
 
+    // --- 5. Global Order Fetcher Loop ---
     setInterval(() => {
+      // Use the global currentUser variable instead of querying firebase.auth() again
       if (currentUser && currentUser.email) {
+        // Only fetch if adminEmails are actually loaded to prevent errors
         if (adminEmails.length > 0) {
           fetchAndRenderOrders(currentUser.email, adminEmails, courierEmails || []);
         }
       } else {
+        // console.warn("Skipping fetch - no user"); // Commented out to reduce console noise
       }
     }, 5000);
 
