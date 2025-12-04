@@ -673,11 +673,36 @@ button[data-section="home"] p, button[data-section="cart"] p, button[data-sectio
   grid-template-columns: repeat(auto-fit, minmax(var(--card), 1fr));
 }
 
-@media (min-width: 560px) { .menu-grid { grid-template-columns: repeat(2, minmax(0, var(--card))); } }
-@media (min-width: 900px) { .menu-grid { grid-template-columns: repeat(3, minmax(0, var(--card))); } }
-@media (min-width: 1250px) { .menu-grid { grid-template-columns: repeat(4, minmax(0, var(--card))); } }
-@media (min-width: 1600px) { .menu-grid { grid-template-columns: repeat(5, minmax(0, var(--card))); } }
-@media (min-width: 1950px) { .menu-grid { grid-template-columns: repeat(6, minmax(0, var(--card))); } }
+  @media (min-width: 0px) {
+    .menu-grid {
+      grid-template-columns: repeat(1, minmax(0, var(--card)));
+    }
+  }
+  @media (min-width: 560px) {
+    .menu-grid {
+      grid-template-columns: repeat(2, minmax(0, var(--card)));
+    }
+  }
+  @media (min-width: 900px) {
+    .menu-grid {
+      grid-template-columns: repeat(3, minmax(0, var(--card)));
+    }
+  }
+  @media (min-width: 1250px) {
+    .menu-grid {
+      grid-template-columns: repeat(4, minmax(0, var(--card)));
+    }
+  }
+  @media (min-width: 1600px) {
+    .menu-grid {
+      grid-template-columns: repeat(5, minmax(0, var(--card)));
+    }
+  }
+  @media (min-width: 1950px) {
+    .menu-grid {
+      grid-template-columns: repeat(6, minmax(0, var(--card)));
+    }
+  }
 
 .menu-item {
   width: 100%;
