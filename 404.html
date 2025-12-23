@@ -2,19 +2,24 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8" />
-  <title>404 — Makanan Tidak Ditemukan</title>
+  <title>404 — Page not found</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
   <style>
     body {
       margin: 0;
       font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
-      background: #0f0f0f;
-      color: #ffffff;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      height: 100vh;
+      background:
+        linear-gradient(rgba(0,0,0,0.65), rgba(0,0,0,0.65)),
+        url("assets/images/popcorn.jpg");
+    background-size: cover;     /* 👈 crop to fit */
+    background-position: center;
+    background-repeat: no-repeat;
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
     }
 
     .box {
@@ -70,7 +75,7 @@
       The page you are looking for doesn't exist.<br>
       this might happen because of typos, page deleted, or we never cooked it
     </p>
-    <a href="/">Balik ke CepatMakan</a>
+    <a href="/">Back to cepatmakan</a>
   </div>
 </body>
 </html>
